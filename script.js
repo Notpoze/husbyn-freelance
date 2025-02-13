@@ -29,9 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	navLinks.forEach((link) => {
 		const linkPath = link.getAttribute("href");
 
-		// If the current page's path matches the link's path, mark it as active
-		// If the homepage is requested (root '/', index.html), treat it as active for '/'
-		if (currentPage === linkPath || (currentPage === "/" && linkPath === "/")) {
+		// For home page (both production "/" and local "/index.html")
+		if (
+			currentPage === linkPath ||
+			(currentPage === "/" && linkPath === "index.html") ||
+			(currentPage === "/index.html" && linkPath === "index.html")
+		) {
+			link.classList.add("active");
+		} else if (currentPage === linkPath) {
 			link.classList.add("active");
 		} else {
 			link.classList.remove("active");

@@ -45,9 +45,9 @@ nav a:hover {
 }
 
 nav a.active {
-    background: var(--accent); /* Highlight active link */
-    color: var(--primary); /* Text color change */
-    font-weight: bold; /* Make the active link bold */
+    background: var(--accent);  /* Highlight the active link with background */
+    color: var(--primary);      /* Change text color */
+    font-weight: bold;          /* Bold text for active link */
 }
 
 .hero {
