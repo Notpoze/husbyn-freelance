@@ -29,14 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	navLinks.forEach((link) => {
 		const linkPath = link.getAttribute("href");
 
-		// For home page (both production "/" and local "/index.html")
+		// Check if current page matches the link (handling home and portfolio)
 		if (
 			currentPage === linkPath ||
 			(currentPage === "/" && linkPath === "index.html") ||
-			(currentPage === "/index.html" && linkPath === "index.html")
+			(currentPage === "/index.html" && linkPath === "index.html") ||
+			(currentPage === "/portfolio.html" && linkPath === "portfolio.html")
 		) {
-			link.classList.add("active");
-		} else if (currentPage === linkPath) {
 			link.classList.add("active");
 		} else {
 			link.classList.remove("active");
