@@ -44,6 +44,12 @@ nav a:hover {
     color: var(--primary);
 }
 
+nav a.active {
+    background: var(--accent); /* Highlight active link */
+    color: var(--primary); /* Text color change */
+    font-weight: bold; /* Make the active link bold */
+}
+
 .hero {
     text-align: center;
     padding: 8rem 2rem;
