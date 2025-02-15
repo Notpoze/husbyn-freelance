@@ -13,6 +13,7 @@ const observer = new IntersectionObserver((entries) => {
 	entries.forEach((entry) => {
 		if (entry.isIntersecting) {
 			entry.target.classList.add("visible");
+			observer.unobserve(entry.target);
 		}
 	});
 });
@@ -24,18 +25,13 @@ document.querySelectorAll(".card, .contact").forEach((el) => {
 
 document.addEventListener("DOMContentLoaded", () => {
 	const navLinks = document.querySelectorAll("nav a");
-	const currentPage = window.location.pathname;
+	// Get only the file name from the current pathname.
+	const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
 	navLinks.forEach((link) => {
 		const linkPath = link.getAttribute("href");
 
-		// Check if current page matches the link (handling home and portfolio)
-		if (
-			currentPage === linkPath ||
-			(currentPage === "/" && linkPath === "index.html") ||
-			(currentPage === "/index.html" && linkPath === "index.html") ||
-			(currentPage === "/portfolio.html" && linkPath === "portfolio.html")
-		) {
+		if (currentPage === linkPath) {
 			link.classList.add("active");
 		} else {
 			link.classList.remove("active");
