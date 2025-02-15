@@ -1,3 +1,18 @@
+// Add language checker
+document.addEventListener("DOMContentLoaded", () => {
+	const userLang = navigator.language || navigator.userLanguage; // Get browser language
+
+	if (
+		userLang.startsWith("no") ||
+		userLang.startsWith("nb") ||
+		userLang.startsWith("nn")
+	) {
+		if (!window.location.pathname.startsWith("/no/")) {
+			window.location.href = "/no/";
+		}
+	}
+});
+
 // Add smooth scroll behavior
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 	anchor.addEventListener("click", function (e) {
