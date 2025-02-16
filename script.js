@@ -40,23 +40,17 @@ document.querySelectorAll(".card, .contact").forEach((el) => {
 
 document.addEventListener("DOMContentLoaded", () => {
 	const navLinks = document.querySelectorAll("nav a");
-
-	// Helper function: if a URL ends with a slash or is empty, treat it as the index.
-	function normalizeUrl(url) {
-		// Remove any query string/hash if needed here (optional)
-		if (url.endsWith("/")) {
-			return url + "index.html";
-		}
-		return url || "index.html";
-	}
-
-	// Normalize the current page’s path.
-	const normalizedCurrent = normalizeUrl(window.location.pathname);
+	// Get current file name from the URL, default to 'index.html'
+	const currentFile = (
+		window.location.pathname.split("/").pop() || "index.html"
+	).toLowerCase();
 
 	navLinks.forEach((link) => {
-		const href = link.getAttribute("href");
-		const normalizedLink = normalizeUrl(href);
-		if (normalizedCurrent === normalizedLink) {
+		// Extract file name from the link's href
+		const linkHref = link.getAttribute("href");
+		const linkFile = (linkHref.split("/").pop() || "index.html").toLowerCase();
+
+		if (currentFile === linkFile) {
 			link.classList.add("active");
 		} else {
 			link.classList.remove("active");
