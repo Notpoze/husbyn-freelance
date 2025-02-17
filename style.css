@@ -144,6 +144,8 @@ footer {
 .contact {
     text-align: center;
     padding: 4rem 2rem;
+    border-top: 3px solid var(--accent);
+    border-bottom: 3px solid var(--accent);
 }
 
 .btn {
