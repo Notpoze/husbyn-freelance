@@ -78,14 +78,14 @@ document.addEventListener("DOMContentLoaded", function () {
 	const noActive = currentLang === "no" ? "active-lang" : "";
 
 	const languageHTML = `
-	  <a href="${
-			currentLang === "en" ? "#" : altPath
-		}" class="language-link ${enActive}" data-lang="en">🇬🇧 EN</a>
-	  <span>|</span>
-	  <a href="${
-			currentLang === "no" ? "#" : altPath
-		}" class="language-link ${noActive}" data-lang="no">🇳🇴 NO</a>
-	`;
+	<a href="${
+		currentLang === "en" ? "#" : altPath
+	}" class="language-link ${enActive}" data-lang="en" aria-label="Switch to English">🇬🇧</a>
+	<span>|</span>
+	<a href="${
+		currentLang === "no" ? "#" : altPath
+	}" class="language-link ${noActive}" data-lang="no" aria-label="Bytt til norsk">🇳🇴</a>
+  `;
 
 	// Populate every container that should show the language switcher
 	switcherContainers.forEach(function (container) {
