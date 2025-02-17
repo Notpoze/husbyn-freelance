@@ -29,30 +29,42 @@
   <meta name="twitter:image" content="https://www.husbynfreelance.com/images/langstein.JPG">
 
   <link rel="stylesheet" href="/style.css?v=1.8">
+  <script defer src="/script.js"></script>
 </head>
 <body>
   <header class="hero">
     <h1>Portfolio</h1>
   </header>
   <header>
-    <nav>
-      <a href="/">Home</a>
-      <a href="portfolio.html">Portfolio</a>
+    <nav class="main-nav">
+      <!-- Left Section: Language Switcher -->
+      <div class="nav-left">
+        <div id="language-switcher"></div>
+      </div>
+    
+      <!-- Center Section: Navigation Links -->
+      <div class="nav-center">
+        <a href="/">Home</a>
+        <a href="portfolio.html">Portfolio</a>
+      </div>
     </nav>
   </header>
 
   <main>
+    <div class="media-info">
+      <p><strong>Note:</strong> The images on this page are compressed for web-view, and the videos have been downsampled to 30fps from 60fps for smoother performance.</p>
+    </div>
     <section class="gallery">
       <div class="gallery-item">
-        <img src="/images/hammervatnet3.JPG" alt="Arial shot of Hammervatnet" loading="lazy">
+        <img src="/images/hammervatnet3.JPG" alt="Aerial shot of Hammervatnet" loading="lazy">
         <p>Hammervatnet</p>
       </div>
       <div class="gallery-item">
-        <img src="/images/langstein.JPG" alt="Arial shot of Langstein" loading="lazy">
+        <img src="/images/langstein.JPG" alt="Aerial shot of Langstein" loading="lazy">
         <p>Langstein</p>
       </div>
       <div class="gallery-item">
-        <img src="/images/aasen1.JPG" alt="Arial shot of Åsen" loading="lazy">
+        <img src="/images/aasen1.JPG" alt="Aerial shot of Åsen" loading="lazy">
         <p>Åsen</p>
       </div>
     </section>
@@ -82,9 +94,17 @@
   </main>
 
   <footer>
-    <nav>
-      <a href="/">Home</a>
-      <a href="portfolio.html">Portfolio</a>
+    <nav class="main-nav">
+      <!-- Left Section: Language Switcher -->
+      <div class="nav-left">
+        <div id="language-switcher"></div>
+      </div>
+    
+      <!-- Center Section: Navigation Links -->
+      <div class="nav-center">
+        <a href="/">Home</a>
+        <a href="portfolio.html">Portfolio</a>
+      </div>
     </nav>
     <section class="contact">
       <h2>Contact</h2>
@@ -95,6 +115,6 @@
     <p>© 2025 Husbyn Freelance</p>
   </footer>
 
-  <script src="/script.js"></script>
+  <!-- <script src="/script.js"></script> -->
 </body>
 </html>

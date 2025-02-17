@@ -24,13 +24,37 @@ header {
     border-bottom: 3px solid var(--accent);
 }
 
-nav {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
+footer {
+    background: var(--secondary);
+    padding: 1rem 2rem;
+    border-top: 3px solid var(--accent);
+    border-bottom: 3px solid var(--accent);
 }
 
-nav a {
+.main-nav {
+    position: relative; /* Make the container relative for absolute positioning inside */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align items to the left by default */
+    padding: 1rem 2rem;
+    background: var(--secondary);
+}
+
+/* Left: Language switcher aligned left */
+.nav-left {
+    flex: none;
+    text-align: left;
+}
+
+/* Center: Navigation links centered using absolute positioning */
+.nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Navigation link styling for nav-center remains unchanged */
+.nav-center a {
     color: var(--text);
     text-decoration: none;
     font-weight: bold;
@@ -39,32 +63,29 @@ nav a {
     transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Hover effect for non-active links */
-nav a:hover {
+.nav-center a:hover {
     background: var(--accent);
     color: var(--primary);
     transform: scale(1.05);
     box-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
 }
 
-/* Active state styling */
-nav a.active {
+.nav-center a.active {
     background: var(--accent);
     color: var(--primary);
     font-weight: bold;
     border-bottom: 3px solid var(--primary);
 }
 
-/* Active state should have a subtler hover effect */
-nav a.active:hover {
-    transform: none; /* no scale effect */
-    box-shadow: none; /* no extra glow */
+.nav-center a.active:hover {
+    transform: none;
+    box-shadow: none;
 }
 
-/* Focus state for accessibility */
-nav a:focus {
+.nav-center a:focus {
     outline: 2px solid var(--accent);
 }
+
 .hero {
     text-align: center;
     padding: 8rem 2rem;
@@ -235,4 +256,36 @@ video {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Language Switcher Styles */
+#language-switcher {
+    font-size: 0.9rem;
+}
+
+.language-link {
+    color: var(--text);
+    text-decoration: none;
+    margin: 0 0.3rem;
+    transition: color 0.3s ease;
+}
+
+.language-link:hover {
+    text-decoration: underline;
+}
+
+.language-link.active-lang {
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: default;
+}
+
+/* Media Information Block on Portfolio Pages */
+.media-info {
+    background-color: var(--secondary);
+    padding: 1rem;
+    margin: 1rem 0;
+    border-left: 4px solid var(--accent);
+    color: var(--text);
+    font-size: 0.9rem;
 }

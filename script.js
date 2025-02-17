@@ -1,18 +1,3 @@
-// // Add language checker
-// document.addEventListener("DOMContentLoaded", () => {
-// 	const userLang = navigator.language || navigator.userLanguage; // Get browser language
-
-// 	if (
-// 		userLang.startsWith("no") ||
-// 		userLang.startsWith("nb") ||
-// 		userLang.startsWith("nn")
-// 	) {
-// 		if (!window.location.pathname.startsWith("/no/")) {
-// 			window.location.href = "/no/";
-// 		}
-// 	}
-// });
-
 // Add smooth scroll behavior
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 	anchor.addEventListener("click", function (e) {
@@ -55,5 +40,55 @@ document.addEventListener("DOMContentLoaded", () => {
 		} else {
 			link.classList.remove("active");
 		}
+	});
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+	// Select all elements that should contain the language switcher
+	const switcherContainers = document.querySelectorAll("#language-switcher");
+	if (!switcherContainers.length) return;
+
+	let currentPath = window.location.pathname;
+	if (!currentPath.startsWith("/")) {
+		currentPath = "/" + currentPath;
+	}
+
+	let currentLang = "en";
+	let altPath = "";
+
+	if (
+		currentPath.startsWith("/no/") ||
+		currentPath === "/no/" ||
+		currentPath.includes("/no/index.html")
+	) {
+		currentLang = "no";
+		// Remove '/no' from the URL to build the English alternative
+		altPath = currentPath.replace("/no", "") || "/";
+	} else {
+		currentLang = "en";
+		// If at root, then the Norwegian version is at '/no/'
+		if (currentPath === "/" || currentPath === "/index.html") {
+			altPath = "/no/";
+		} else {
+			altPath = "/no" + currentPath;
+		}
+	}
+
+	const enActive = currentLang === "en" ? "active-lang" : "";
+	const noActive = currentLang === "no" ? "active-lang" : "";
+
+	const languageHTML = `
+	  <a href="${
+			currentLang === "en" ? "#" : altPath
+		}" class="language-link ${enActive}" data-lang="en">🇬🇧 EN</a>
+	  <span>|</span>
+	  <a href="${
+			currentLang === "no" ? "#" : altPath
+		}" class="language-link ${noActive}" data-lang="no">🇳🇴 NO</a>
+	`;
+
+	// Populate every container that should show the language switcher
+	switcherContainers.forEach(function (container) {
+		container.innerHTML = languageHTML;
 	});
 });
