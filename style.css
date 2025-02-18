@@ -291,3 +291,26 @@ video {
     color: var(--text);
     font-size: 0.9rem;
 }
+
+@media (max-width: 480px) {
+    /* Stack nav items vertically and center them */
+    .main-nav {
+      flex-direction: column;
+      align-items: center;
+      position: relative; /* remove any absolute positioning context */
+    }
+    /* Remove absolute centering on small screens */
+    .nav-center {
+      position: static;
+      transform: none;
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 1rem;
+      white-space: nowrap; /* Prevent the longer Norwegian text from wrapping */
+    }
+    /* Optionally, adjust the language switcher if you want it to align differently */
+    .nav-left {
+      align-self: flex-start;
+      margin-left: 1rem;
+    }
+  }
