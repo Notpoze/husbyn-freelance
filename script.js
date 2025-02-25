@@ -258,3 +258,163 @@ function initVideoOptimization() {
 		});
 	}
 }
+
+// Lightbox functionality - Add at the end of script.js
+
+// Initialize lightbox
+function initLightbox() {
+	// Create lightbox container if it doesn't exist
+	if (!document.getElementById("lightbox-container")) {
+		const lightboxHTML = `
+		<div id="lightbox-container" class="lightbox-container">
+		  <div class="lightbox-content">
+			<img id="lightbox-image" src="" alt="Enlarged image">
+			<div class="lightbox-caption" id="lightbox-caption"></div>
+		  </div>
+		  <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous image">❮</button>
+		  <button class="lightbox-next" id="lightbox-next" aria-label="Next image">❯</button>
+		  <button class="lightbox-close" id="lightbox-close" aria-label="Close lightbox">×</button>
+		</div>
+	  `;
+		document.body.insertAdjacentHTML("beforeend", lightboxHTML);
+	}
+
+	// Get lightbox elements
+	const lightboxContainer = document.getElementById("lightbox-container");
+	const lightboxImage = document.getElementById("lightbox-image");
+	const lightboxCaption = document.getElementById("lightbox-caption");
+	const prevButton = document.getElementById("lightbox-prev");
+	const nextButton = document.getElementById("lightbox-next");
+	const closeButton = document.getElementById("lightbox-close");
+
+	// Get all gallery images
+	const galleryImages = document.querySelectorAll(".gallery-item img");
+	if (galleryImages.length === 0) return;
+
+	// Array to store all gallery images data
+	const galleryData = [];
+
+	// Add click event to each gallery image
+	galleryImages.forEach((img, index) => {
+		// Get the caption from the next sibling .gallery-caption element
+		const captionEl = img
+			.closest(".gallery-item")
+			.querySelector(".gallery-caption");
+		const captionTitle = captionEl
+			? captionEl.querySelector("h3").textContent
+			: "";
+		const captionText = captionEl
+			? captionEl.querySelector("p").textContent
+			: "";
+
+		// Store image data
+		galleryData.push({
+			src: img.src,
+			alt: img.alt,
+			title: captionTitle,
+			description: captionText,
+		});
+
+		// Make the image clickable
+		img.style.cursor = "pointer";
+		img.setAttribute("data-index", index);
+
+		img.addEventListener("click", function (e) {
+			openLightbox(index);
+		});
+	});
+
+	// Current image index
+	let currentIndex = 0;
+
+	// Open lightbox function
+	function openLightbox(index) {
+		currentIndex = index;
+		updateLightboxContent();
+		lightboxContainer.style.display = "flex";
+		document.body.style.overflow = "hidden"; // Prevent scrolling
+
+		// Add keyboard event listener
+		document.addEventListener("keydown", handleKeyboardNavigation);
+	}
+
+	// Update lightbox content
+	function updateLightboxContent() {
+		const data = galleryData[currentIndex];
+		lightboxImage.src = data.src;
+		lightboxImage.alt = data.alt;
+
+		// Update caption
+		lightboxCaption.innerHTML = `
+		<h3>${data.title}</h3>
+		<p>${data.description}</p>
+	  `;
+
+		// Update button states (disable if at the end)
+		prevButton.style.visibility = currentIndex > 0 ? "visible" : "hidden";
+		nextButton.style.visibility =
+			currentIndex < galleryData.length - 1 ? "visible" : "hidden";
+	}
+
+	// Close lightbox function
+	function closeLightbox() {
+		lightboxContainer.style.display = "none";
+		document.body.style.overflow = "auto"; // Restore scrolling
+		document.removeEventListener("keydown", handleKeyboardNavigation);
+	}
+
+	// Navigate to previous image
+	function prevImage() {
+		if (currentIndex > 0) {
+			currentIndex--;
+			updateLightboxContent();
+		}
+	}
+
+	// Navigate to next image
+	function nextImage() {
+		if (currentIndex < galleryData.length - 1) {
+			currentIndex++;
+			updateLightboxContent();
+		}
+	}
+
+	// Handle keyboard navigation
+	function handleKeyboardNavigation(e) {
+		switch (e.key) {
+			case "ArrowLeft":
+				prevImage();
+				break;
+			case "ArrowRight":
+				nextImage();
+				break;
+			case "Escape":
+				closeLightbox();
+				break;
+		}
+	}
+
+	// Add event listeners to lightbox buttons
+	prevButton.addEventListener("click", prevImage);
+	nextButton.addEventListener("click", nextImage);
+	closeButton.addEventListener("click", closeLightbox);
+
+	// Close when clicking outside the image
+	lightboxContainer.addEventListener("click", function (e) {
+		if (e.target === lightboxContainer) {
+			closeLightbox();
+		}
+	});
+}
+
+// Add the lightbox initialization to the DOMContentLoaded
+document.addEventListener("DOMContentLoaded", function () {
+	// Other initializations...
+	initSmoothScroll();
+	initAnimations();
+	initActiveNavLinks();
+	initLanguageSwitcher();
+	initLazyLoadImages();
+	initVideoOptimization();
+	initLightbox(); // Add this line
+});

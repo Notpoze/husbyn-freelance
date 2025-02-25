@@ -85,6 +85,60 @@
         </div>
       </div>
     </section>
+
+    <section class="form-section">
+        <div class="container">
+          <h2>Send en Melding</h2>
+          <p>Bruk skjemaet nedenfor for å sende din forespørsel direkte. Jeg vil svare så snart som mulig.</p>
+          
+          <form id="contact-form" class="contact-form" action="https://formspree.io/f/mzzdlolb" method="POST">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Navn *</label>
+                <input type="text" id="name" name="name" required placeholder="Ditt navn">
+              </div>
+              
+              <div class="form-group">
+                <label for="email">E-post *</label>
+                <input type="email" id="email" name="email" required placeholder="Din e-postadresse">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="subject">Emne *</label>
+              <input type="text" id="subject" name="subject" required placeholder="Hva gjelder dette?">
+            </div>
+            
+            <div class="form-group">
+              <label for="service">Tjenester av Interesse</label>
+              <select id="service" name="service">
+                <option value="">-- Velg en tjeneste --</option>
+                <option value="drone-photography">Dronefotografering</option>
+                <option value="drone-videography">Dronevideoopptak</option>
+                <option value="real-estate">Luftfoto for Eiendom</option>
+                <option value="transportation">Transporttjenester</option>
+                <option value="other">Annet (vennligst spesifiser)</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="message">Melding *</label>
+              <textarea id="message" name="message" required placeholder="Vennligst gi detaljer om prosjektet ditt eller forespørselen..."></textarea>
+            </div>
+            
+            <div class="form-group form-checkbox">
+              <input type="checkbox" id="consent" name="consent" required>
+              <label for="consent">Jeg samtykker til at dette nettstedet lagrer min innsendte informasjon slik at de kan svare på forespørselen min.</label>
+            </div>
+            
+            <div class="form-submit">
+              <button type="submit" class="submit-btn">Send Melding</button>
+            </div>
+            
+            <div id="form-status" class="form-status"></div>
+          </form>
+        </div>
+      </section>
     
     <section class="faq-section">
       <div class="container">
@@ -134,5 +188,40 @@
       <p>© 2025 Husbyn Freelance | Alle rettigheter reservert</p>
     </div>
   </footer>
+  <script>
+    const contactForm = document.getElementById('contact-form');
+    const formStatus = document.getElementById('form-status');
+    
+    if (contactForm) {
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(contactForm);
+        const url = contactForm.getAttribute('action');
+        
+        formStatus.innerHTML = '<div class="loading">Sender melding...</div>';
+        
+        fetch(url, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.ok) {
+            contactForm.reset();
+            formStatus.innerHTML = '<div class="success">Takk! Meldingen din er sendt.</div>';
+          } else {
+            formStatus.innerHTML = '<div class="error">Beklager! Det oppstod et problem ved sending av meldingen din. Vennligst prøv igjen.</div>';
+          }
+        })
+        .catch(error => {
+          formStatus.innerHTML = '<div class="error">Beklager! Det oppstod et problem ved sending av meldingen din. Vennligst prøv igjen.</div>';
+        });
+      });
+    }
+  </script>
 </body>
 </html>

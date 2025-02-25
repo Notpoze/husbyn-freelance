@@ -85,6 +85,60 @@
         </div>
       </div>
     </section>
+
+    <section class="form-section">
+        <div class="container">
+          <h2>Send a Message</h2>
+          <p>Use the form below to send your inquiry directly. I'll get back to you as soon as possible.</p>
+          
+          <form id="contact-form" class="contact-form" action="https://formspree.io/f/mzzdlolb" method="POST">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Name *</label>
+                <input type="text" id="name" name="name" required placeholder="Your name">
+              </div>
+              
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required placeholder="Your email address">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="subject">Subject *</label>
+              <input type="text" id="subject" name="subject" required placeholder="What is this regarding?">
+            </div>
+            
+            <div class="form-group">
+              <label for="service">Service Interested In</label>
+              <select id="service" name="service">
+                <option value="">-- Select a service --</option>
+                <option value="drone-photography">Drone Photography</option>
+                <option value="drone-videography">Drone Videography</option>
+                <option value="real-estate">Real Estate Aerial Media</option>
+                <option value="transportation">Transportation Services</option>
+                <option value="other">Other (please specify)</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="message">Message *</label>
+              <textarea id="message" name="message" required placeholder="Please provide details about your project or inquiry..."></textarea>
+            </div>
+            
+            <div class="form-group form-checkbox">
+              <input type="checkbox" id="consent" name="consent" required>
+              <label for="consent">I consent to having this website store my submitted information so they can respond to my inquiry.</label>
+            </div>
+            
+            <div class="form-submit">
+              <button type="submit" class="submit-btn">Send Message</button>
+            </div>
+            
+            <div id="form-status" class="form-status"></div>
+          </form>
+        </div>
+      </section>
     
     <section class="faq-section">
       <div class="container">
@@ -134,5 +188,40 @@
       <p>© 2025 Husbyn Freelance | All Rights Reserved</p>
     </div>
   </footer>
+  <script>
+    const contactForm = document.getElementById('contact-form');
+    const formStatus = document.getElementById('form-status');
+    
+    if (contactForm) {
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(contactForm);
+        const url = contactForm.getAttribute('action');
+        
+        formStatus.innerHTML = '<div class="loading">Sending message...</div>';
+        
+        fetch(url, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.ok) {
+            contactForm.reset();
+            formStatus.innerHTML = '<div class="success">Thank you! Your message has been sent.</div>';
+          } else {
+            formStatus.innerHTML = '<div class="error">Oops! There was a problem sending your message. Please try again.</div>';
+          }
+        })
+        .catch(error => {
+          formStatus.innerHTML = '<div class="error">Oops! There was a problem sending your message. Please try again.</div>';
+        });
+      });
+    }
+  </script>
 </body>
 </html>
