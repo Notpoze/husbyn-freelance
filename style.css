@@ -123,7 +123,7 @@ a:hover {
   padding: var(--spacing-2xl) var(--spacing-lg);
   background: var(--secondary);
   border-bottom: 3px solid var(--accent);
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: 0;
 }
 
 .hero h1 {
@@ -174,6 +174,7 @@ a:hover {
   background: var(--secondary);
   box-shadow: var(--shadow-md);
   z-index: 10;
+  margin-bottom: var(--spacing-md);
 }
 
 .nav-left {
@@ -213,16 +214,23 @@ a:hover {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+  padding-left: 0.5rem;
 }
 
 .language-link {
   color: var(--text-muted);
   font-size: var(--font-size-sm);
   transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  font-size: 1.1rem;
 }
 
 .language-link:hover {
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 
 .language-link.active-lang {
@@ -236,7 +244,7 @@ a:hover {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: var(--spacing-xl);
   padding: var(--spacing-xl) var(--spacing-lg);
-  margin-bottom: var(--spacing-2xl);
+  margin-top: var(--spacing-2xl);
 }
 
 .card {
@@ -287,519 +295,45 @@ a:hover {
   font-weight: bold;
 }
 
-/* Contact page specific styles - Add these to your style.css file */
-
-/* Contact section styling */
-.contact-section {
-  padding: var(--spacing-xl) var(--spacing-lg);
-  margin-bottom: var(--spacing-xl);
-}
-
-.contact-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-xl);
-  margin: var(--spacing-xl) 0;
-}
-
-.contact-card {
-  background: var(--secondary);
-  padding: var(--spacing-xl);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  transition: transform var(--transition-normal);
-  border-top: 3px solid var(--accent);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.contact-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
-}
-
-.contact-icon {
-  font-size: 2.5rem;
-  margin-bottom: var(--spacing-md);
-}
-
-.contact-link {
-  display: inline-block;
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  margin-top: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: var(--accent);
-  color: var(--secondary);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
-}
-
-.contact-link:hover {
-  background: var(--accent-dark);
-  transform: translateY(-2px);
-  text-decoration: none;
-  color: var(--text);
-}
-
-.location-info, .availability-info {
-  background: var(--secondary);
-  padding: var(--spacing-lg);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--spacing-xl);
-}
-
-/* FAQ section styling */
-.faq-section {
-  padding: var(--spacing-xl) var(--spacing-lg);
-  margin-bottom: var(--spacing-2xl);
-}
-
-.faq-item {
-  background: var(--secondary);
-  padding: var(--spacing-lg);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--spacing-lg);
-  border-left: 3px solid var(--accent);
-}
-
-.faq-item h3 {
-  color: var(--accent);
-  margin-bottom: var(--spacing-sm);
-}
-
-/* Make the contact section responsive */
-@media (max-width: 768px) {
-  .contact-cards {
-    grid-template-columns: 1fr;
-  }
-  
-  .contact-card {
-    margin-bottom: var(--spacing-lg);
-  }
-}
-
-/* Add fade-in animation for contact elements */
-.contact-card, .faq-item, .location-info, .availability-info {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.contact-card.visible, .faq-item.visible, .location-info.visible, .availability-info.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Contact Form Styles - Add to style.css */
-
-.form-section {
-  padding: var(--spacing-xl) var(--spacing-lg);
-  margin-bottom: var(--spacing-xl);
-}
-
-.contact-form {
-  background: var(--secondary);
-  padding: var(--spacing-xl);
-  border-radius: var(--radius-lg);
-  margin-top: var(--spacing-lg);
-  border-top: 3px solid var(--accent);
-  box-shadow: var(--shadow-md);
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
-
-.form-group {
-  margin-bottom: var(--spacing-lg);
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: var(--spacing-xs);
-  font-weight: 600;
-  color: var(--text);
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: var(--spacing-md);
-  background: var(--primary);
-  border: 1px solid var(--text-muted);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  font-family: inherit;
-  font-size: var(--font-size-base);
-  transition: border-color var(--transition-fast);
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
-}
-
-.form-group textarea {
-  min-height: 150px;
-  resize: vertical;
-}
-
-.form-checkbox {
-  display: flex;
-  align-items: flex-start;
-}
-
-.form-checkbox input {
-  width: auto;
-  margin-right: var(--spacing-sm);
-  margin-top: 0.3em;
-}
-
-.form-checkbox label {
-  margin-bottom: 0;
-  font-weight: normal;
-  font-size: var(--font-size-sm);
-  line-height: 1.4;
-}
-
-.form-submit {
-  margin-top: var(--spacing-xl);
-}
-
-.submit-btn {
-  background: var(--accent);
-  color: var(--secondary);
-  border: none;
-  padding: var(--spacing-md) var(--spacing-xl);
-  font-size: var(--font-size-base);
-  font-weight: 700;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background-color var(--transition-fast), transform var(--transition-fast);
-  box-shadow: var(--shadow-sm);
-}
-
-.submit-btn:hover {
-  background: var(--accent-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.form-status {
-  margin-top: var(--spacing-lg);
-  padding: var(--spacing-md);
-  border-radius: var(--radius-sm);
-}
-
-.form-status .loading {
-  color: var(--accent);
-}
-
-.form-status .success {
-  color: #10B981; /* Green color for success */
-  background: rgba(16, 185, 129, 0.1);
-  padding: var(--spacing-md);
-  border-radius: var(--radius-sm);
-}
-
-.form-status .error {
-  color: #EF4444; /* Red color for error */
-  background: rgba(239, 68, 68, 0.1);
-  padding: var(--spacing-md);
-  border-radius: var(--radius-sm);
+/* Main content area */
+main {
+  padding-top: var(--spacing-lg);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-::placeholder {
-  color: var(--text-muted);
-  opacity: 0.7;
-}
-
-/* Lightbox Styles - Add to style.css */
-
-/* Enhance gallery items with hover effect */
-.gallery-item {
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform var(--transition-normal);
-}
-
-.gallery-item:hover {
-  transform: translateY(-5px);
-}
-
-.gallery-item img {
-  transition: transform var(--transition-normal);
-}
-
-.gallery-item:hover img {
-  transform: scale(1.03);
-}
-
-.gallery-item::after {
-  content: '🔍';
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(56, 189, 248, 0.8);
-  color: white;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-  font-size: 14px;
-}
-
-.gallery-item:hover::after {
-  opacity: 1;
-}
-
-/* Lightbox container */
-.lightbox-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(15, 23, 42, 0.95);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-/* Lightbox content */
-.lightbox-content {
-  position: relative;
-  max-width: 90%;
-  max-height: 80vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Lightbox image */
-#lightbox-image {
-  max-height: 80vh;
-  max-width: 100%;
-  object-fit: contain;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-}
-
-/* Lightbox caption */
-.lightbox-caption {
-  background-color: rgba(15, 23, 42, 0.85);
-  padding: var(--spacing-md);
-  margin-top: var(--spacing-sm);
-  border-radius: var(--radius-md);
-  text-align: center;
-}
-
-.lightbox-caption h3 {
-  margin-bottom: var(--spacing-xs);
-  color: var(--accent);
-}
-
-.lightbox-caption p {
-  margin-bottom: 0;
-  font-size: var(--font-size-sm);
-}
-
-/* Lightbox navigation buttons */
-.lightbox-prev,
-.lightbox-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(56, 189, 248, 0.7);
-  color: white;
-  border: none;
-  font-size: 24px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color var(--transition-fast);
-}
-
-.lightbox-prev:hover,
-.lightbox-next:hover {
-  background-color: var(--accent);
-}
-
-.lightbox-prev {
-  left: 20px;
-}
-
-.lightbox-next {
-  right: 20px;
-}
-
-/* Lightbox close button */
-.lightbox-close {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background-color: rgba(56, 189, 248, 0.7);
-  color: white;
-  border: none;
-  font-size: 28px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color var(--transition-fast);
-}
-
-.lightbox-close:hover {
-  background-color: var(--accent);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .lightbox-content {
-    max-width: 95%;
-  }
-  
-  .lightbox-prev,
-  .lightbox-next {
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
-  }
-  
-  .lightbox-close {
-    width: 36px;
-    height: 36px;
-    font-size: 24px;
-  }
-}
-
-/* Fix for contact cards visibility */
-.contact-section,
-.contact-cards,
-.contact-card,
-.location-info,
-.availability-info {
-  visibility: visible !important;
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-}
-
-.contact-cards {
-  display: grid !important;
-}
-
-.contact-card {
-  display: flex !important;
-}
-
-.contact-section,
-.location-info,
-.availability-info {
-  display: block !important;
-}
-
-/* Fix for language switcher spacing on mobile */
-@media (max-width: 768px) {
-  /* Restructure the navigation for mobile */
   .main-nav {
-    padding: 0.75rem;
-    flex-wrap: wrap;
-    justify-content: space-between;
+      padding: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-sm);
   }
-  
-  /* Add more spacing for the language switcher area */
+
   .nav-left {
-    margin-right: 1.5rem;
-    min-width: 80px; /* Ensure there's enough space */
+      margin-right: 1.5rem;
+      min-width: 80px;
   }
-  
-  /* Make navigation links slightly smaller on mobile */
+
   .nav-center {
-    position: relative;
-    left: auto;
-    transform: none;
-    justify-content: center;
+      position: relative;
+      left: auto;
+      transform: none;
+      justify-content: center;
   }
-  
-  /* Add more touch space for language links */
-  .language-link {
-    padding: 8px;
-    margin: 0 4px;
-    font-size: 1.2rem; /* Larger flags for better touch targets */
-  }
-  
-  /* Increase space between language links */
-  .language-divider {
-    margin: 0 6px;
-  }
-  
-  /* Better spacing for navigation links */
+
   .nav-center a {
-    padding: 0.5rem 0.75rem;
-    margin: 0 0.1rem;
-    font-size: 0.95rem;
+      padding: 0.5rem 0.75rem;
+      margin: 0 0.1rem;
+      font-size: 0.95rem;
   }
-}
 
-/* Enhanced language switcher for all screen sizes */
-#language-switcher {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-left: 0.5rem;
-}
-
-.language-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  height: 24px;
-  font-size: 1.1rem;
-  transition: transform 0.2s ease;
-}
-
-.language-link:hover {
-  transform: scale(1.2);
-}
-
-/* Add a tiny bit more spacing on desktop */
-@media (min-width: 769px) {
-  .nav-left {
-    margin-right: 2rem;
+  .language-link {
+      padding: 8px;
+      margin: 0 4px;
+      font-size: 1.2rem;
   }
-  
-  .language-divider {
-    margin: 0 4px;
+
+  main {
+      padding-top: var(--spacing-md);
   }
 }
