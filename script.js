@@ -123,30 +123,39 @@ function initActiveNavLinks() {
 
 	// Get current path from URL
 	const currentPath = window.location.pathname;
-	const currentFile = (
-		currentPath.split("/").pop() || "index.html"
-	).toLowerCase();
+
+	// Extract the page name from the path
+	let currentPage = currentPath.split("/").pop() || "index.html";
+
+	// Fix for homepage where pathname might end with / or be empty
+	if (currentPage === "" || currentPage === "/") {
+		currentPage = "index.html";
+	}
 
 	navLinks.forEach((link) => {
+		// Get the href attribute
 		const linkHref = link.getAttribute("href");
-		let linkFile = "";
 
-		// Handle both relative and absolute paths
-		if (linkHref.startsWith("/")) {
-			linkFile = (linkHref.split("/").pop() || "index.html").toLowerCase();
-		} else {
-			linkFile = linkHref.toLowerCase();
+		// Extract the page name from the href
+		let linkPage = linkHref;
+
+		// Remove leading '/' or './' if present
+		if (linkPage.startsWith("/") || linkPage.startsWith("./")) {
+			linkPage = linkPage.replace(/^(\/|\.\/)/, "");
 		}
 
-		// Special case for home page
-		if (linkFile === "/" || linkFile === "") {
-			linkFile = "index.html";
+		// Handle empty href or just "/"
+		if (linkPage === "" || linkPage === "/") {
+			linkPage = "."; // Representing home page
 		}
 
-		if (
-			currentFile === linkFile ||
-			(currentFile === "index.html" && (linkFile === "/" || linkFile === ""))
-		) {
+		// Check if this link points to the current page
+		const isCurrentPage =
+			(currentPage === "index.html" &&
+				(linkPage === "." || linkPage === "./" || linkPage === "index.html")) ||
+			(currentPage !== "index.html" && linkPage.includes(currentPage));
+
+		if (isCurrentPage) {
 			link.setAttribute("aria-current", "page");
 		} else {
 			link.removeAttribute("aria-current");
@@ -164,20 +173,21 @@ function initLanguageSwitcher() {
 	let currentLang = currentPath.includes("/no/") ? "no" : "en";
 	let alternativePath = "";
 
+	// Current page filename
+	const currentFile = currentPath.split("/").pop() || "index.html";
+
 	// Build alternative language URL
 	if (currentLang === "no") {
 		// Convert Norwegian URL to English
-		alternativePath = currentPath.replace("/no", "") || "/";
-		if (alternativePath === "") alternativePath = "/";
+		alternativePath = "/" + currentFile;
 	} else {
 		// Convert English URL to Norwegian
-		if (currentPath === "/" || currentPath === "/index.html") {
-			alternativePath = "/no/";
-		} else {
-			// Insert /no/ before the path, handling both with and without leading slash
-			alternativePath =
-				"/no" + (currentPath.startsWith("/") ? "" : "/") + currentPath;
-		}
+		alternativePath = "/no/" + currentFile;
+	}
+
+	// Special case for home page
+	if (currentFile === "" || currentFile === "index.html") {
+		alternativePath = currentLang === "no" ? "/" : "/no/";
 	}
 
 	// Cleanup double slashes in the path if any

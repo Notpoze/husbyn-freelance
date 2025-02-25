@@ -18,6 +18,14 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://www.husbynfreelance.com/portfolio.html"/>
     <xhtml:link rel="alternate" hreflang="no" href="https://www.husbynfreelance.com/no/portfolio.html"/>
   </url>
+  <url>
+    <loc>https://www.husbynfreelance.com/contact.html</loc>
+    <lastmod>2025-02-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.husbynfreelance.com/contact.html"/>
+    <xhtml:link rel="alternate" hreflang="no" href="https://www.husbynfreelance.com/no/contact.html"/>
+  </url>
   
   <!-- Norwegian URLs -->
   <url>
@@ -35,5 +43,13 @@
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="no" href="https://www.husbynfreelance.com/no/portfolio.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.husbynfreelance.com/portfolio.html"/>
+  </url>
+  <url>
+    <loc>https://www.husbynfreelance.com/no/contact.html</loc>
+    <lastmod>2025-02-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="no" href="https://www.husbynfreelance.com/no/contact.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.husbynfreelance.com/contact.html"/>
   </url>
 </urlset>
