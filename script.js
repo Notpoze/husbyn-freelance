@@ -259,8 +259,6 @@ function initVideoOptimization() {
 	}
 }
 
-// Lightbox functionality - Add at the end of script.js
-
 // Initialize lightbox
 function initLightbox() {
 	// Create lightbox container if it doesn't exist
@@ -417,4 +415,82 @@ document.addEventListener("DOMContentLoaded", function () {
 	initLazyLoadImages();
 	initVideoOptimization();
 	initLightbox(); // Add this line
+});
+
+// Lightbox functionality for portfolio page
+function initPortfolioLightbox() {
+	// Create lightbox container if it doesn't exist
+	if (!document.getElementById("portfolio-lightbox")) {
+		const lightboxHTML = `
+		<div id="portfolio-lightbox" class="lightbox-container">
+		  <div class="lightbox-content">
+			<img id="lightbox-image" class="lightbox-image" src="" alt="Full-size image">
+			<div id="lightbox-caption" class="lightbox-caption"></div>
+		  </div>
+		  <button id="lightbox-close" class="lightbox-close" aria-label="Close lightbox">×</button>
+		</div>
+	  `;
+		document.body.insertAdjacentHTML("beforeend", lightboxHTML);
+	}
+
+	// Get lightbox elements
+	const lightbox = document.getElementById("portfolio-lightbox");
+	const lightboxImage = document.getElementById("lightbox-image");
+	const lightboxCaption = document.getElementById("lightbox-caption");
+	const closeButton = document.getElementById("lightbox-close");
+
+	// Find all gallery images
+	const galleryImages = document.querySelectorAll(".gallery-item img");
+
+	// Add click event to each gallery image
+	galleryImages.forEach((img) => {
+		img.style.cursor = "pointer";
+		img.addEventListener("click", function () {
+			// Use the same image source, or you could point to a full-resolution version
+			lightboxImage.src = this.src;
+
+			// Get caption from the parent gallery item
+			const caption =
+				this.closest(".gallery-item").querySelector(".gallery-caption");
+			if (caption) {
+				const title = caption.querySelector("h3")
+					? caption.querySelector("h3").textContent
+					: "";
+				const description = caption.querySelector("p")
+					? caption.querySelector("p").textContent
+					: "";
+				lightboxCaption.innerHTML = `<strong>${title}</strong><br>${description}`;
+			} else {
+				lightboxCaption.textContent = "";
+			}
+
+			// Show lightbox
+			lightbox.classList.add("show");
+		});
+	});
+
+	// Close lightbox when close button is clicked
+	closeButton.addEventListener("click", () => {
+		lightbox.classList.remove("show");
+	});
+
+	// Close lightbox when clicking outside the image
+	lightbox.addEventListener("click", (e) => {
+		if (e.target === lightbox) {
+			lightbox.classList.remove("show");
+		}
+	});
+
+	// Close lightbox with ESC key
+	document.addEventListener("keydown", (e) => {
+		if (e.key === "Escape" && lightbox.classList.contains("show")) {
+			lightbox.classList.remove("show");
+		}
+	});
+}
+
+// Add lightbox initialization to DOMContentLoaded
+document.addEventListener("DOMContentLoaded", function () {
+	// Existing initializations...
+	initPortfolioLightbox();
 });
