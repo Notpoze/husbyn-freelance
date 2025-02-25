@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- English URLs -->
+  <url>
+    <loc>https://www.husbynfreelance.com/</loc>
+    <lastmod>2025-02-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.husbynfreelance.com/"/>
+    <xhtml:link rel="alternate" hreflang="no" href="https://www.husbynfreelance.com/no/"/>
+  </url>
+  <url>
+    <loc>https://www.husbynfreelance.com/portfolio.html</loc>
+    <lastmod>2025-02-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.husbynfreelance.com/portfolio.html"/>
+    <xhtml:link rel="alternate" hreflang="no" href="https://www.husbynfreelance.com/no/portfolio.html"/>
+  </url>
+  
+  <!-- Norwegian URLs -->
+  <url>
+    <loc>https://www.husbynfreelance.com/no/</loc>
+    <lastmod>2025-02-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="no" href="https://www.husbynfreelance.com/no/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.husbynfreelance.com/"/>
+  </url>
+  <url>
+    <loc>https://www.husbynfreelance.com/no/portfolio.html</loc>
+    <lastmod>2025-02-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="no" href="https://www.husbynfreelance.com/no/portfolio.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.husbynfreelance.com/portfolio.html"/>
+  </url>
+</urlset>
