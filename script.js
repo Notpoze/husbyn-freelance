@@ -27,6 +27,27 @@ document.addEventListener("DOMContentLoaded", function () {
 		});
 });
 
+// Add at the beginning of your script.js file
+document.addEventListener("DOMContentLoaded", function () {
+	// Generate a timestamp-based version parameter
+	const cssVersion = new Date().getTime();
+
+	// Find all CSS link tags
+	document.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+		// Get the current href
+		const href = link.getAttribute("href");
+
+		// Only modify if it doesn't already have a timestamp parameter
+		if (href && !href.includes("v=timestamp")) {
+			// Remove any existing version parameter
+			const cleanHref = href.split("?")[0];
+
+			// Add the new timestamp parameter
+			link.setAttribute("href", `${cleanHref}?v=timestamp${cssVersion}`);
+		}
+	});
+});
+
 // Wait for DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", function () {
 	initSmoothScroll();
@@ -188,72 +209,6 @@ function initLanguageSwitcher() {
 	switcherContainers.forEach((container) => {
 		container.innerHTML = languageHTML;
 	});
-}
-
-// Lazy load images for performance
-function initLazyLoadImages() {
-	if ("loading" in HTMLImageElement.prototype) {
-		// Browser supports native lazy loading
-		document.querySelectorAll('img[loading="lazy"]').forEach((img) => {
-			img.src = img.getAttribute("data-src");
-		});
-	} else {
-		// Fallback for browsers that don't support native lazy loading
-		const lazyImages = document.querySelectorAll('img[loading="lazy"]');
-
-		if ("IntersectionObserver" in window) {
-			const imageObserver = new IntersectionObserver((entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						const lazyImage = entry.target;
-						lazyImage.src = lazyImage.getAttribute("data-src");
-						imageObserver.unobserve(lazyImage);
-					}
-				});
-			});
-
-			lazyImages.forEach((image) => {
-				imageObserver.observe(image);
-			});
-		} else {
-			// Fallback for older browsers without IntersectionObserver
-			let active = false;
-
-			const lazyLoad = function () {
-				if (active === false) {
-					active = true;
-
-					setTimeout(function () {
-						lazyImages.forEach((lazyImage) => {
-							if (
-								lazyImage.getBoundingClientRect().top <= window.innerHeight &&
-								lazyImage.getBoundingClientRect().bottom >= 0 &&
-								getComputedStyle(lazyImage).display !== "none"
-							) {
-								lazyImage.src = lazyImage.getAttribute("data-src");
-
-								lazyImages = lazyImages.filter(function (image) {
-									return image !== lazyImage;
-								});
-
-								if (lazyImages.length === 0) {
-									document.removeEventListener("scroll", lazyLoad);
-									window.removeEventListener("resize", lazyLoad);
-									window.removeEventListener("orientationchange", lazyLoad);
-								}
-							}
-						});
-
-						active = false;
-					}, 200);
-				}
-			};
-
-			document.addEventListener("scroll", lazyLoad);
-			window.addEventListener("resize", lazyLoad);
-			window.addEventListener("orientationchange", lazyLoad);
-		}
-	}
 }
 
 // Optimize video loading
