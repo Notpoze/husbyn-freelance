@@ -1,3 +1,32 @@
+// Base path configuration - helps work in both local and production environments
+document.addEventListener("DOMContentLoaded", function () {
+	// Detect if we're running locally or on the production domain
+	const isLocalhost =
+		window.location.hostname === "localhost" ||
+		window.location.hostname === "127.0.0.1" ||
+		window.location.protocol === "file:";
+
+	// Set the base path accordingly
+	const basePath = isLocalhost ? "" : "/";
+
+	// Fix all asset paths that start with '/'
+	document
+		.querySelectorAll(
+			'img[src^="/"], link[href^="/"], script[src^="/"], video source[src^="/"]'
+		)
+		.forEach((el) => {
+			const attrName = el.hasAttribute("src") ? "src" : "href";
+			const currentPath = el.getAttribute(attrName);
+
+			// Skip URLs that are already absolute with domain
+			if (currentPath.startsWith("http")) return;
+
+			// Replace the leading slash with the appropriate base path
+			const newPath = currentPath.replace(/^\//, basePath);
+			el.setAttribute(attrName, newPath);
+		});
+});
+
 // Wait for DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", function () {
 	initSmoothScroll();
