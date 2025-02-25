@@ -163,7 +163,7 @@ function initActiveNavLinks() {
 	});
 }
 
-// Language switcher functionality
+// Language switcher functionality with flags for all devices
 function initLanguageSwitcher() {
 	const switcherContainers = document.querySelectorAll("#language-switcher");
 	if (!switcherContainers.length) return;
@@ -193,7 +193,7 @@ function initLanguageSwitcher() {
 	// Cleanup double slashes in the path if any
 	alternativePath = alternativePath.replace(/\/+/g, "/");
 
-	// Create language switcher HTML
+	// Create language switcher HTML with flags for all devices
 	const enActive = currentLang === "en" ? "active-lang" : "";
 	const noActive = currentLang === "no" ? "active-lang" : "";
 

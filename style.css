@@ -727,3 +727,79 @@ a:hover {
 .availability-info {
   display: block !important;
 }
+
+/* Fix for language switcher spacing on mobile */
+@media (max-width: 768px) {
+  /* Restructure the navigation for mobile */
+  .main-nav {
+    padding: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  /* Add more spacing for the language switcher area */
+  .nav-left {
+    margin-right: 1.5rem;
+    min-width: 80px; /* Ensure there's enough space */
+  }
+  
+  /* Make navigation links slightly smaller on mobile */
+  .nav-center {
+    position: relative;
+    left: auto;
+    transform: none;
+    justify-content: center;
+  }
+  
+  /* Add more touch space for language links */
+  .language-link {
+    padding: 8px;
+    margin: 0 4px;
+    font-size: 1.2rem; /* Larger flags for better touch targets */
+  }
+  
+  /* Increase space between language links */
+  .language-divider {
+    margin: 0 6px;
+  }
+  
+  /* Better spacing for navigation links */
+  .nav-center a {
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.1rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Enhanced language switcher for all screen sizes */
+#language-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 0.5rem;
+}
+
+.language-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.language-link:hover {
+  transform: scale(1.2);
+}
+
+/* Add a tiny bit more spacing on desktop */
+@media (min-width: 769px) {
+  .nav-left {
+    margin-right: 2rem;
+  }
+  
+  .language-divider {
+    margin: 0 4px;
+  }
+}
