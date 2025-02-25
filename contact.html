@@ -30,6 +30,74 @@
 
   <link rel="stylesheet" href="style.css">
   <script defer src="script.js"></script>
+  <style>
+    /* Force contact cards to display */
+    .contact-section {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    .contact-cards {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    .contact-card {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: var(--secondary);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease;
+      border-top: 3px solid var(--accent);
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    .contact-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .contact-link {
+      display: inline-block;
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      padding: 0.5rem 1.5rem;
+      background: var(--accent);
+      color: var(--secondary);
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    
+    .contact-link:hover {
+      background: var(--accent-dark);
+      transform: translateY(-2px);
+      text-decoration: none;
+      color: var(--text);
+    }
+    
+    /* Force other important sections to display */
+    .location-info, .availability-info {
+      display: block !important;
+      background: var(--secondary);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      margin-bottom: 2rem;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    </style>
 </head>
 <body>
   <header class="hero">
@@ -53,38 +121,39 @@
 
   <main>
     <section id="contact-details" class="contact-section">
-      <div class="container">
-        <h2>Get in Touch</h2>
-        <p>Whether you need stunning aerial footage or reliable transportation services in the Stjørdal and Trondheim regions, I'm here to help. Feel free to reach out using any of the contact methods below to discuss your project requirements or request a quote.</p>
-        
-        <div class="contact-cards">
-          <div class="contact-card">
-            <div class="contact-icon">📧</div>
-            <h3>Email</h3>
-            <p>For detailed inquiries and project discussions:</p>
-            <a href="mailto:eirikhusbyn@gmail.com" class="contact-link">eirikhusbyn@gmail.com</a>
+        <div class="container">
+          <h2>Get in Touch</h2>
+          <p>Whether you need stunning aerial footage or reliable transportation services in the Stjørdal and Trondheim regions, I'm here to help. Feel free to reach out using any of the contact methods below to discuss your project requirements or request a quote.</p>
+          
+          <!-- Contact cards with simplified structure -->
+          <div class="contact-cards">
+            <div class="contact-card">
+              <div class="contact-icon">📧</div>
+              <h3>Email</h3>
+              <p>For detailed inquiries and project discussions:</p>
+              <a href="mailto:eirikhusbyn@gmail.com" class="contact-link">eirikhusbyn@gmail.com</a>
+            </div>
+            
+            <div class="contact-card">
+              <div class="contact-icon">📱</div>
+              <h3>Phone</h3>
+              <p>For immediate assistance:</p>
+              <a href="tel:+4794842430" class="contact-link">+47 948 42 430</a>
+            </div>
           </div>
           
-          <div class="contact-card">
-            <div class="contact-icon">📱</div>
-            <h3>Phone</h3>
-            <p>For immediate assistance:</p>
-            <a href="tel:+4794842430" class="contact-link">+47 948 42 430</a>
+          <div class="location-info">
+            <h3>Service Area</h3>
+            <p>Based in Stjørdal, serving Trøndelag and surrounding areas throughout Norway. Available for both local and regional projects.</p>
+          </div>
+          
+          <div class="availability-info">
+            <h3>Availability</h3>
+            <p>Monday to Friday: 08:00 - 18:00</p>
+            <p>Weekend appointments available upon request for special projects.</p>
           </div>
         </div>
-        
-        <div class="location-info">
-          <h3>Service Area</h3>
-          <p>Based in Stjørdal, serving Trøndelag and surrounding areas throughout Norway. Available for both local and regional projects.</p>
-        </div>
-        
-        <div class="availability-info">
-          <h3>Availability</h3>
-          <p>Monday to Friday: 08:00 - 18:00</p>
-          <p>Weekend appointments available upon request for special projects.</p>
-        </div>
-      </div>
-    </section>
+      </section>
 
     <section class="form-section">
         <div class="container">
@@ -188,6 +257,36 @@
       <p>© 2025 Husbyn Freelance | All Rights Reserved</p>
     </div>
   </footer>
+  <script>
+    // Ensure contact cards remain visible
+    document.addEventListener('DOMContentLoaded', function() {
+      // Function to check visibility
+      function ensureContactCardsVisible() {
+        const cards = document.querySelectorAll('.contact-card');
+        
+        cards.forEach(card => {
+          card.style.display = 'flex';
+          card.style.visibility = 'visible';
+          card.style.opacity = '1';
+        });
+        
+        const contactSection = document.querySelector('.contact-section');
+        if (contactSection) {
+          contactSection.style.display = 'block';
+          contactSection.style.visibility = 'visible';
+          contactSection.style.opacity = '1';
+        }
+      }
+      
+      // Call immediately
+      ensureContactCardsVisible();
+      
+      // Then call again after a short delay (to override any other scripts)
+      setTimeout(ensureContactCardsVisible, 100);
+      setTimeout(ensureContactCardsVisible, 500);
+      setTimeout(ensureContactCardsVisible, 1000);
+    });
+  </script>
   <script>
     const contactForm = document.getElementById('contact-form');
     const formStatus = document.getElementById('form-status');

@@ -702,3 +702,28 @@ a:hover {
     font-size: 24px;
   }
 }
+
+/* Fix for contact cards visibility */
+.contact-section,
+.contact-cards,
+.contact-card,
+.location-info,
+.availability-info {
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.contact-cards {
+  display: grid !important;
+}
+
+.contact-card {
+  display: flex !important;
+}
+
+.contact-section,
+.location-info,
+.availability-info {
+  display: block !important;
+}
