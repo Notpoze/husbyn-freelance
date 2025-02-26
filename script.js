@@ -617,10 +617,40 @@ function initFormValidation() {
 	}
 }
 
-// Cookie Consent Functionality
+// Fixed Cookie Consent Functionality
 function initCookieConsent() {
-	// Create cookie banner HTML
-	const cookieBannerHTML = `
+	// First check if consent was already given before doing anything else
+	const consentGiven = getCookie("cookie_consent");
+
+	// If consent was already given, don't show the banner at all
+	if (consentGiven) {
+		// Apply saved preferences immediately
+		const preferences = JSON.parse(consentGiven);
+
+		// Load scripts based on preferences
+		if (preferences.analytics) {
+			loadAnalyticsScripts();
+		}
+
+		if (preferences.marketing) {
+			loadMarketingScripts();
+		}
+
+		// Exit early - don't create or show the banner
+		return;
+	}
+
+	// Determine current language from URL path
+	let currentPath = window.location.pathname;
+	let currentLang = currentPath.includes("/no/") ? "no" : "en";
+
+	// Select the appropriate banner HTML based on language
+	const cookieBannerHTML =
+		currentLang === "no" ? cookieBannerHTML_NO : cookieBannerHTML_EN;
+
+	// Create cookie banner HTML only if consent hasn't been given
+	// English version
+	const cookieBannerHTML_EN = `
 	  <div class="cookie-consent" id="cookie-banner">
 		<div class="cookie-text">
 		  <p>We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. By clicking "Accept All", you consent to our use of cookies.</p>
@@ -677,6 +707,64 @@ function initCookieConsent() {
 	  </div>
 	`;
 
+	// Norwegian version
+	const cookieBannerHTML_NO = `
+	  <div class="cookie-consent" id="cookie-banner">
+		<div class="cookie-text">
+		  <p>Vi bruker informasjonskapsler for å forbedre din nettleseropplevelse, analysere nettstedstrafikk og tilpasse innhold. Ved å klikke på "Godta alle", samtykker du til vår bruk av informasjonskapsler.</p>
+		</div>
+		<div class="cookie-buttons">
+		  <button class="cookie-btn settings" id="cookie-settings">Innstillinger</button>
+		  <button class="cookie-btn accept" id="cookie-accept">Godta alle</button>
+		</div>
+	  </div>
+	  
+	  <div class="cookie-modal" id="cookie-modal">
+		<div class="cookie-modal-content">
+		  <button class="cookie-modal-close" id="cookie-modal-close" aria-label="Lukk innstillinger">×</button>
+		  <h3>Innstillinger for informasjonskapsler</h3>
+		  
+		  <div class="cookie-option">
+			<div class="cookie-option-header">
+			  <h4>Nødvendige informasjonskapsler</h4>
+			  <label class="cookie-switch">
+				<input type="checkbox" checked disabled>
+				<span class="cookie-slider"></span>
+			  </label>
+			</div>
+			<p>Disse informasjonskapslene er nødvendige for at nettstedet skal fungere ordentlig og kan ikke deaktiveres.</p>
+		  </div>
+		  
+		  <div class="cookie-option">
+			<div class="cookie-option-header">
+			  <h4>Analyseinformasjonskapsler</h4>
+			  <label class="cookie-switch">
+				<input type="checkbox" id="analytics-cookies">
+				<span class="cookie-slider"></span>
+			  </label>
+			</div>
+			<p>Disse informasjonskapslene hjelper oss å forstå hvordan besøkende samhandler med nettstedet vårt, noe som gjør det mulig for oss å forbedre din opplevelse.</p>
+		  </div>
+		  
+		  <div class="cookie-option">
+			<div class="cookie-option-header">
+			  <h4>Markedsføringsinformasjonskapsler</h4>
+			  <label class="cookie-switch">
+				<input type="checkbox" id="marketing-cookies">
+				<span class="cookie-slider"></span>
+			  </label>
+			</div>
+			<p>Disse informasjonskapslene brukes til å spore besøkende på tvers av nettsteder for å vise relevante annonser.</p>
+		  </div>
+		  
+		  <div class="cookie-modal-footer">
+			<button class="cookie-modal-btn cancel" id="cookie-modal-cancel">Avbryt</button>
+			<button class="cookie-modal-btn save" id="cookie-modal-save">Lagre preferanser</button>
+		  </div>
+		</div>
+	  </div>
+	`;
+
 	// Add banner to the page
 	document.body.insertAdjacentHTML("beforeend", cookieBannerHTML);
 
@@ -691,89 +779,93 @@ function initCookieConsent() {
 	const analyticsCookies = document.getElementById("analytics-cookies");
 	const marketingCookies = document.getElementById("marketing-cookies");
 
-	// Check if consent was already given
-	const consentGiven = getCookie("cookie_consent");
+	// Important: Start with the banner hidden and only show it after a delay
+	if (cookieBanner) {
+		// Hide the banner initially (with CSS)
+		cookieBanner.style.opacity = "0";
+		cookieBanner.style.transform = "translateY(100%)";
 
-	// If no consent was given yet, show the banner
-	if (!consentGiven) {
+		// Show the banner after a delay (to prevent flash)
 		setTimeout(() => {
 			cookieBanner.classList.add("show");
+			cookieBanner.style.opacity = "1";
+			cookieBanner.style.transform = "translateY(0)";
 		}, 1000);
-	} else {
-		// Apply saved preferences
-		const preferences = JSON.parse(consentGiven);
-		if (analyticsCookies) analyticsCookies.checked = preferences.analytics;
-		if (marketingCookies) marketingCookies.checked = preferences.marketing;
-
-		// Load relevant scripts based on preferences
-		if (preferences.analytics) {
-			loadAnalyticsScripts();
-		}
-
-		if (preferences.marketing) {
-			loadMarketingScripts();
-		}
 	}
 
 	// Event Listeners
-	cookieAccept.addEventListener("click", () => {
-		// Accept all cookies
-		const preferences = {
-			necessary: true,
-			analytics: true,
-			marketing: true,
-		};
+	if (cookieAccept) {
+		cookieAccept.addEventListener("click", () => {
+			// Accept all cookies
+			const preferences = {
+				necessary: true,
+				analytics: true,
+				marketing: true,
+			};
 
-		// Save preferences
-		setCookie("cookie_consent", JSON.stringify(preferences), 365);
+			// Save preferences
+			setCookie("cookie_consent", JSON.stringify(preferences), 365);
 
-		// Hide banner
-		cookieBanner.classList.remove("show");
+			// Hide banner
+			cookieBanner.classList.remove("show");
+			cookieBanner.style.opacity = "0";
+			cookieBanner.style.transform = "translateY(100%)";
 
-		// Load all scripts
-		loadAnalyticsScripts();
-		loadMarketingScripts();
-	});
-
-	cookieSettings.addEventListener("click", () => {
-		// Show settings modal
-		cookieModal.classList.add("show");
-	});
-
-	cookieModalClose.addEventListener("click", () => {
-		// Close modal
-		cookieModal.classList.remove("show");
-	});
-
-	cookieModalCancel.addEventListener("click", () => {
-		// Close modal without saving
-		cookieModal.classList.remove("show");
-	});
-
-	cookieModalSave.addEventListener("click", () => {
-		// Save preferences
-		const preferences = {
-			necessary: true,
-			analytics: analyticsCookies.checked,
-			marketing: marketingCookies.checked,
-		};
-
-		// Save preferences
-		setCookie("cookie_consent", JSON.stringify(preferences), 365);
-
-		// Close modal and banner
-		cookieModal.classList.remove("show");
-		cookieBanner.classList.remove("show");
-
-		// Load scripts based on preferences
-		if (preferences.analytics) {
+			// Load all scripts
 			loadAnalyticsScripts();
-		}
-
-		if (preferences.marketing) {
 			loadMarketingScripts();
-		}
-	});
+		});
+	}
+
+	if (cookieSettings) {
+		cookieSettings.addEventListener("click", () => {
+			// Show settings modal
+			cookieModal.classList.add("show");
+		});
+	}
+
+	if (cookieModalClose) {
+		cookieModalClose.addEventListener("click", () => {
+			// Close modal
+			cookieModal.classList.remove("show");
+		});
+	}
+
+	if (cookieModalCancel) {
+		cookieModalCancel.addEventListener("click", () => {
+			// Close modal without saving
+			cookieModal.classList.remove("show");
+		});
+	}
+
+	if (cookieModalSave) {
+		cookieModalSave.addEventListener("click", () => {
+			// Save preferences
+			const preferences = {
+				necessary: true,
+				analytics: analyticsCookies.checked,
+				marketing: marketingCookies.checked,
+			};
+
+			// Save preferences
+			setCookie("cookie_consent", JSON.stringify(preferences), 365);
+
+			// Close modal and banner
+			cookieModal.classList.remove("show");
+			cookieBanner.classList.remove("show");
+			cookieBanner.style.opacity = "0";
+			cookieBanner.style.transform = "translateY(100%)";
+
+			// Load scripts based on preferences
+			if (preferences.analytics) {
+				loadAnalyticsScripts();
+			}
+
+			if (preferences.marketing) {
+				loadMarketingScripts();
+			}
+		});
+	}
 }
 
 // Helper function to set a cookie
