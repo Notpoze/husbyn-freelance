@@ -546,6 +546,16 @@ a:hover {
   gap: var(--spacing-lg);
 }
 
+.contact-section h2,
+.contact-section p {
+  text-align: center;
+}
+
+.location-info h3,
+.availability-info h3 {
+  text-align: center;
+}
+
 /* FAQ Section */
 .faq-section {
   background: var(--secondary);
