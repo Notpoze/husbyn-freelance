@@ -292,33 +292,39 @@
     
     if (contactForm) {
       contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(contactForm);
-        const url = contactForm.getAttribute('action');
-        
-        formStatus.innerHTML = '<div class="loading">Sending message...</div>';
-        
-        fetch(url, {
-          method: 'POST',
-          body: formData,
-          headers: {
+    e.preventDefault();
+    
+    const formData = new FormData(contactForm);
+    const url = contactForm.getAttribute('action');
+    
+    formStatus.innerHTML = '<div class="loading">Sending message...</div>';
+    
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
             'Accept': 'application/json'
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.ok) {
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.ok) {
             contactForm.reset();
             formStatus.innerHTML = '<div class="success">Thank you! Your message has been sent.</div>';
-          } else {
-            formStatus.innerHTML = '<div class="error">Oops! There was a problem sending your message. Please try again.</div>';
-          }
-        })
-        .catch(error => {
-          formStatus.innerHTML = '<div class="error">Oops! There was a problem sending your message. Please try again.</div>';
-        });
-      });
+        } else {
+            throw new Error('Submission was not successful');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        formStatus.innerHTML = '<div class="error">Oops! There was a problem sending your message. Please try again or contact us directly.</div>';
+    });
+});
     }
   </script>
 </body>
