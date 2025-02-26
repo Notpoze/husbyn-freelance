@@ -1,5 +1,20 @@
-// Base path configuration - helps work in both local and production environments
+// Optimized version of script.js
 document.addEventListener("DOMContentLoaded", function () {
+	// Consolidate all initializations
+	initBasePathConfiguration();
+	initCssVersioning();
+	initSmoothScroll();
+	initAnimations();
+	initActiveNavLinks();
+	initLanguageSwitcher();
+	initMediaOptimization(); // Combined lazy loading of images and videos
+	initLightbox(); // Combined both lightbox implementations
+	//initMobileNavigation();
+	initFormValidation();
+});
+
+// Base path configuration - helps work in both local and production environments
+function initBasePathConfiguration() {
 	// Detect if we're running locally or on the production domain
 	const isLocalhost =
 		window.location.hostname === "localhost" ||
@@ -19,16 +34,18 @@ document.addEventListener("DOMContentLoaded", function () {
 			const currentPath = el.getAttribute(attrName);
 
 			// Skip URLs that are already absolute with domain
-			if (currentPath.startsWith("http")) return;
+			if (currentPath && currentPath.startsWith("http")) return;
 
 			// Replace the leading slash with the appropriate base path
-			const newPath = currentPath.replace(/^\//, basePath);
-			el.setAttribute(attrName, newPath);
+			if (currentPath) {
+				const newPath = currentPath.replace(/^\//, basePath);
+				el.setAttribute(attrName, newPath);
+			}
 		});
-});
+}
 
-// Add at the beginning of your script.js file
-document.addEventListener("DOMContentLoaded", function () {
+// Add CSS versioning to prevent caching issues
+function initCssVersioning() {
 	// Generate a timestamp-based version parameter
 	const cssVersion = new Date().getTime();
 
@@ -46,17 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			link.setAttribute("href", `${cleanHref}?v=timestamp${cssVersion}`);
 		}
 	});
-});
-
-// Wait for DOM to be fully loaded
-document.addEventListener("DOMContentLoaded", function () {
-	initSmoothScroll();
-	initAnimations();
-	initActiveNavLinks();
-	initLanguageSwitcher();
-	initLazyLoadImages();
-	initVideoOptimization();
-});
+}
 
 // Smooth scroll for anchor links
 function initSmoothScroll() {
@@ -88,7 +95,7 @@ function initSmoothScroll() {
 	});
 }
 
-// Animation on scroll
+// Animation on scroll - using Intersection Observer
 function initAnimations() {
 	// Use Intersection Observer for scroll animations
 	const observer = new IntersectionObserver(
@@ -109,8 +116,9 @@ function initAnimations() {
 
 	// Add fade-in class to elements
 	const animateElements = document.querySelectorAll(
-		".card, .gallery-item, .video-section, .about-section, .contact, .cta-section"
+		".card, .gallery-item, .video-section, .about-section, .contact, .cta-section, .faq-item"
 	);
+
 	animateElements.forEach((el) => {
 		el.classList.add("fade-in");
 		observer.observe(el);
@@ -133,8 +141,14 @@ function initActiveNavLinks() {
 	}
 
 	navLinks.forEach((link) => {
+		// Skip language switcher links
+		if (link.classList.contains("language-link")) {
+			return;
+		}
+
 		// Get the href attribute
 		const linkHref = link.getAttribute("href");
+		if (!linkHref) return;
 
 		// Extract the page name from the href
 		let linkPage = linkHref;
@@ -157,8 +171,13 @@ function initActiveNavLinks() {
 
 		if (isCurrentPage) {
 			link.setAttribute("aria-current", "page");
+			link.setAttribute(
+				"aria-label",
+				`Current page: ${link.textContent.trim()}`
+			);
 		} else {
 			link.removeAttribute("aria-current");
+			link.setAttribute("aria-label", link.textContent.trim());
 		}
 	});
 }
@@ -205,7 +224,7 @@ function initLanguageSwitcher() {
 		 ${currentLang === "en" ? 'aria-current="true"' : ""}>
 		 🇬🇧
 	  </a>
-	  <span class="language-divider">|</span>
+	  <span class="language-divider" aria-hidden="true">|</span>
 	  <a href="${currentLang === "no" ? "#" : alternativePath}" 
 		 class="language-link ${noActive}" 
 		 data-lang="no" 
@@ -218,61 +237,85 @@ function initLanguageSwitcher() {
 	// Add to all language switcher containers
 	switcherContainers.forEach((container) => {
 		container.innerHTML = languageHTML;
+		container.setAttribute("aria-label", "Language selector");
 	});
 }
 
-// Optimize video loading
-function initVideoOptimization() {
-	// Only load videos when they're near the viewport
-	const videos = document.querySelectorAll("video");
+// Combined function for lazy loading media (images and videos)
+function initMediaOptimization() {
+	// Exit early if Intersection Observer is not supported
+	if (!("IntersectionObserver" in window)) {
+		return;
+	}
 
-	if ("IntersectionObserver" in window) {
-		const videoObserver = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						const video = entry.target;
-						const sources = video.querySelectorAll("source");
+	// Create a single observer for both images and videos
+	const mediaObserver = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					const element = entry.target;
 
+					// Handle different types of media
+					if (element.tagName === "IMG") {
+						// Handle images
+						const dataSrc = element.getAttribute("data-src");
+						if (dataSrc) {
+							element.src = dataSrc;
+							element.removeAttribute("data-src");
+						}
+
+						element.classList.add("loaded");
+					} else if (element.tagName === "VIDEO") {
+						// Handle videos
+						const sources = element.querySelectorAll("source");
 						sources.forEach((source) => {
-							// Set the real source only when video is visible
 							const dataSrc = source.getAttribute("data-src");
 							if (dataSrc) {
 								source.src = dataSrc;
+								source.removeAttribute("data-src");
 							}
 						});
 
 						// Load the video
-						video.load();
-						videoObserver.unobserve(video);
+						element.load();
 					}
-				});
-			},
-			{
-				rootMargin: "100px 0px",
-			}
-		);
 
-		videos.forEach((video) => {
-			videoObserver.observe(video);
-		});
-	}
+					// Unobserve the element after handling it
+					mediaObserver.unobserve(element);
+				}
+			});
+		},
+		{
+			rootMargin: "200px 0px", // Load media when it's within 200px of viewport
+			threshold: 0.01, // Trigger when even a tiny part is visible
+		}
+	);
+
+	// Observe all lazyload images
+	document.querySelectorAll("img[loading='lazy']").forEach((img) => {
+		mediaObserver.observe(img);
+	});
+
+	// Observe all videos
+	document.querySelectorAll("video").forEach((video) => {
+		mediaObserver.observe(video);
+	});
 }
 
-// Initialize lightbox
+// Combined lightbox functionality
 function initLightbox() {
 	// Create lightbox container if it doesn't exist
 	if (!document.getElementById("lightbox-container")) {
 		const lightboxHTML = `
-		<div id="lightbox-container" class="lightbox-container">
-		  <div class="lightbox-content">
-			<img id="lightbox-image" src="" alt="Enlarged image">
-			<div class="lightbox-caption" id="lightbox-caption"></div>
-		  </div>
-		  <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous image">❮</button>
-		  <button class="lightbox-next" id="lightbox-next" aria-label="Next image">❯</button>
-		  <button class="lightbox-close" id="lightbox-close" aria-label="Close lightbox">×</button>
+	  <div id="lightbox-container" class="lightbox-container" role="dialog" aria-modal="true" aria-label="Image Lightbox">
+		<div class="lightbox-content">
+		  <img id="lightbox-image" class="lightbox-image" src="" alt="Full-size image">
+		  <div id="lightbox-caption" class="lightbox-caption"></div>
 		</div>
+		<button id="lightbox-prev" class="lightbox-prev" aria-label="Previous image">❮</button>
+		<button id="lightbox-next" class="lightbox-next" aria-label="Next image">❯</button>
+		<button id="lightbox-close" class="lightbox-close" aria-label="Close lightbox">×</button>
+	  </div>
 	  `;
 		document.body.insertAdjacentHTML("beforeend", lightboxHTML);
 	}
@@ -298,17 +341,19 @@ function initLightbox() {
 		const captionEl = img
 			.closest(".gallery-item")
 			.querySelector(".gallery-caption");
-		const captionTitle = captionEl
-			? captionEl.querySelector("h3").textContent
-			: "";
-		const captionText = captionEl
-			? captionEl.querySelector("p").textContent
-			: "";
+		const captionTitle =
+			captionEl && captionEl.querySelector("h3")
+				? captionEl.querySelector("h3").textContent
+				: "";
+		const captionText =
+			captionEl && captionEl.querySelector("p")
+				? captionEl.querySelector("p").textContent
+				: "";
 
 		// Store image data
 		galleryData.push({
 			src: img.src,
-			alt: img.alt,
+			alt: img.alt || "Gallery image",
 			title: captionTitle,
 			description: captionText,
 		});
@@ -316,9 +361,22 @@ function initLightbox() {
 		// Make the image clickable
 		img.style.cursor = "pointer";
 		img.setAttribute("data-index", index);
+		img.setAttribute(
+			"aria-label",
+			`View larger image: ${captionTitle || "Gallery image"}`
+		);
+		img.setAttribute("tabindex", "0"); // Make focusable
 
-		img.addEventListener("click", function (e) {
+		// Add click and keypress event listeners
+		img.addEventListener("click", function () {
 			openLightbox(index);
+		});
+
+		img.addEventListener("keydown", function (e) {
+			if (e.key === "Enter" || e.key === " ") {
+				e.preventDefault();
+				openLightbox(index);
+			}
 		});
 	});
 
@@ -332,6 +390,9 @@ function initLightbox() {
 		lightboxContainer.style.display = "flex";
 		document.body.style.overflow = "hidden"; // Prevent scrolling
 
+		// Set focus to lightbox
+		closeButton.focus();
+
 		// Add keyboard event listener
 		document.addEventListener("keydown", handleKeyboardNavigation);
 	}
@@ -344,14 +405,23 @@ function initLightbox() {
 
 		// Update caption
 		lightboxCaption.innerHTML = `
-		<h3>${data.title}</h3>
-		<p>${data.description}</p>
+	  <h3>${data.title}</h3>
+	  <p>${data.description}</p>
 	  `;
 
 		// Update button states (disable if at the end)
 		prevButton.style.visibility = currentIndex > 0 ? "visible" : "hidden";
+		prevButton.disabled = currentIndex === 0;
+
 		nextButton.style.visibility =
 			currentIndex < galleryData.length - 1 ? "visible" : "hidden";
+		nextButton.disabled = currentIndex === galleryData.length - 1;
+
+		// Update aria labels
+		lightboxContainer.setAttribute(
+			"aria-label",
+			`Image ${currentIndex + 1} of ${galleryData.length}: ${data.title}`
+		);
 	}
 
 	// Close lightbox function
@@ -359,6 +429,14 @@ function initLightbox() {
 		lightboxContainer.style.display = "none";
 		document.body.style.overflow = "auto"; // Restore scrolling
 		document.removeEventListener("keydown", handleKeyboardNavigation);
+
+		// Return focus to the triggering image
+		const originalImage = document.querySelector(
+			`.gallery-item img[data-index="${currentIndex}"]`
+		);
+		if (originalImage) {
+			originalImage.focus();
+		}
 	}
 
 	// Navigate to previous image
@@ -405,92 +483,372 @@ function initLightbox() {
 	});
 }
 
-// Add the lightbox initialization to the DOMContentLoaded
-document.addEventListener("DOMContentLoaded", function () {
-	// Other initializations...
-	initSmoothScroll();
-	initAnimations();
-	initActiveNavLinks();
-	initLanguageSwitcher();
-	initLazyLoadImages();
-	initVideoOptimization();
-	initLightbox(); // Add this line
-});
+// Form validation
+function initFormValidation() {
+	const contactForm = document.getElementById("contact-form");
+	const formStatus = document.getElementById("form-status");
 
-// Lightbox functionality for portfolio page
-function initPortfolioLightbox() {
-	// Create lightbox container if it doesn't exist
-	if (!document.getElementById("portfolio-lightbox")) {
-		const lightboxHTML = `
-		<div id="portfolio-lightbox" class="lightbox-container">
-		  <div class="lightbox-content">
-			<img id="lightbox-image" class="lightbox-image" src="" alt="Full-size image">
-			<div id="lightbox-caption" class="lightbox-caption"></div>
-		  </div>
-		  <button id="lightbox-close" class="lightbox-close" aria-label="Close lightbox">×</button>
-		</div>
-	  `;
-		document.body.insertAdjacentHTML("beforeend", lightboxHTML);
-	}
+	if (!contactForm) return;
 
-	// Get lightbox elements
-	const lightbox = document.getElementById("portfolio-lightbox");
-	const lightboxImage = document.getElementById("lightbox-image");
-	const lightboxCaption = document.getElementById("lightbox-caption");
-	const closeButton = document.getElementById("lightbox-close");
+	// Add validation feedback
+	const inputs = contactForm.querySelectorAll(
+		"input[required], textarea[required]"
+	);
+	inputs.forEach((input) => {
+		// Add blur event listeners for validation feedback
+		input.addEventListener("blur", function () {
+			validateInput(this);
+		});
 
-	// Find all gallery images
-	const galleryImages = document.querySelectorAll(".gallery-item img");
-
-	// Add click event to each gallery image
-	galleryImages.forEach((img) => {
-		img.style.cursor = "pointer";
-		img.addEventListener("click", function () {
-			// Use the same image source, or you could point to a full-resolution version
-			lightboxImage.src = this.src;
-
-			// Get caption from the parent gallery item
-			const caption =
-				this.closest(".gallery-item").querySelector(".gallery-caption");
-			if (caption) {
-				const title = caption.querySelector("h3")
-					? caption.querySelector("h3").textContent
-					: "";
-				const description = caption.querySelector("p")
-					? caption.querySelector("p").textContent
-					: "";
-				lightboxCaption.innerHTML = `<strong>${title}</strong><br>${description}`;
-			} else {
-				lightboxCaption.textContent = "";
+		// Add input event listeners to clear validation errors when typing
+		input.addEventListener("input", function () {
+			if (this.classList.contains("invalid")) {
+				validateInput(this);
 			}
-
-			// Show lightbox
-			lightbox.classList.add("show");
 		});
 	});
 
-	// Close lightbox when close button is clicked
-	closeButton.addEventListener("click", () => {
-		lightbox.classList.remove("show");
-	});
+	// Add submit event handler with validation
+	contactForm.addEventListener("submit", function (e) {
+		e.preventDefault();
 
-	// Close lightbox when clicking outside the image
-	lightbox.addEventListener("click", (e) => {
-		if (e.target === lightbox) {
-			lightbox.classList.remove("show");
+		// Validate all required fields
+		let isValid = true;
+		inputs.forEach((input) => {
+			if (!validateInput(input)) {
+				isValid = false;
+			}
+		});
+
+		if (!isValid) {
+			formStatus.innerHTML =
+				'<div class="error">Please fill in all required fields correctly.</div>';
+			return;
 		}
+
+		// Proceed with form submission
+		submitForm(contactForm, formStatus);
 	});
 
-	// Close lightbox with ESC key
-	document.addEventListener("keydown", (e) => {
-		if (e.key === "Escape" && lightbox.classList.contains("show")) {
-			lightbox.classList.remove("show");
+	function validateInput(input) {
+		let isValid = true;
+		let errorMessage = "";
+
+		// Remove any existing validation message
+		const existingErrorSpan =
+			input.parentNode.querySelector(".validation-error");
+		if (existingErrorSpan) {
+			existingErrorSpan.remove();
+		}
+
+		// Check validity based on type
+		if (input.type === "email") {
+			const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			isValid = emailPattern.test(input.value);
+			errorMessage = "Please enter a valid email address";
+		} else if (input.tagName === "TEXTAREA") {
+			isValid = input.value.trim().length > 10;
+			errorMessage = "Please enter a message with at least 10 characters";
+		} else if (input.type === "checkbox") {
+			isValid = input.checked;
+			errorMessage = "Please check this box to proceed";
+		} else {
+			isValid = input.value.trim() !== "";
+			errorMessage = "This field is required";
+		}
+
+		// Apply validation styling
+		if (!isValid) {
+			input.classList.add("invalid");
+			input.classList.remove("valid");
+
+			// Add error message
+			const errorSpan = document.createElement("span");
+			errorSpan.className = "validation-error";
+			errorSpan.textContent = errorMessage;
+			input.parentNode.appendChild(errorSpan);
+		} else {
+			input.classList.remove("invalid");
+			input.classList.add("valid");
+		}
+
+		return isValid;
+	}
+
+	function submitForm(form, statusElement) {
+		const formData = new FormData(form);
+		const url = form.getAttribute("action");
+
+		statusElement.innerHTML = '<div class="loading">Sending message...</div>';
+
+		fetch(url, {
+			method: "POST",
+			body: formData,
+			headers: {
+				Accept: "application/json",
+			},
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(
+						`Network error: ${response.status} ${response.statusText}`
+					);
+				}
+				return response.json();
+			})
+			.then((data) => {
+				if (data.ok) {
+					form.reset();
+					statusElement.innerHTML =
+						'<div class="success">Thank you! Your message has been sent. We\'ll get back to you shortly.</div>';
+
+					// Remove validation styling
+					form.querySelectorAll(".valid, .invalid").forEach((el) => {
+						el.classList.remove("valid", "invalid");
+					});
+				} else {
+					throw new Error(data.error || "Form submission was not successful");
+				}
+			})
+			.catch((error) => {
+				console.error("Error:", error);
+				statusElement.innerHTML = `<div class="error">There was a problem sending your message: ${error.message}. Please try again or contact us directly.</div>`;
+			});
+	}
+}
+
+// Cookie Consent Functionality
+function initCookieConsent() {
+	// Create cookie banner HTML
+	const cookieBannerHTML = `
+	  <div class="cookie-consent" id="cookie-banner">
+		<div class="cookie-text">
+		  <p>We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. By clicking "Accept All", you consent to our use of cookies.</p>
+		</div>
+		<div class="cookie-buttons">
+		  <button class="cookie-btn settings" id="cookie-settings">Cookie Settings</button>
+		  <button class="cookie-btn accept" id="cookie-accept">Accept All</button>
+		</div>
+	  </div>
+	  
+	  <div class="cookie-modal" id="cookie-modal">
+		<div class="cookie-modal-content">
+		  <button class="cookie-modal-close" id="cookie-modal-close" aria-label="Close cookie settings">×</button>
+		  <h3>Cookie Settings</h3>
+		  
+		  <div class="cookie-option">
+			<div class="cookie-option-header">
+			  <h4>Necessary Cookies</h4>
+			  <label class="cookie-switch">
+				<input type="checkbox" checked disabled>
+				<span class="cookie-slider"></span>
+			  </label>
+			</div>
+			<p>These cookies are essential for the website to function properly and cannot be disabled.</p>
+		  </div>
+		  
+		  <div class="cookie-option">
+			<div class="cookie-option-header">
+			  <h4>Analytics Cookies</h4>
+			  <label class="cookie-switch">
+				<input type="checkbox" id="analytics-cookies">
+				<span class="cookie-slider"></span>
+			  </label>
+			</div>
+			<p>These cookies help us understand how visitors interact with our website, which allows us to improve your experience.</p>
+		  </div>
+		  
+		  <div class="cookie-option">
+			<div class="cookie-option-header">
+			  <h4>Marketing Cookies</h4>
+			  <label class="cookie-switch">
+				<input type="checkbox" id="marketing-cookies">
+				<span class="cookie-slider"></span>
+			  </label>
+			</div>
+			<p>These cookies are used to track visitors across websites to display relevant advertisements.</p>
+		  </div>
+		  
+		  <div class="cookie-modal-footer">
+			<button class="cookie-modal-btn cancel" id="cookie-modal-cancel">Cancel</button>
+			<button class="cookie-modal-btn save" id="cookie-modal-save">Save Preferences</button>
+		  </div>
+		</div>
+	  </div>
+	`;
+
+	// Add banner to the page
+	document.body.insertAdjacentHTML("beforeend", cookieBannerHTML);
+
+	// Get elements
+	const cookieBanner = document.getElementById("cookie-banner");
+	const cookieAccept = document.getElementById("cookie-accept");
+	const cookieSettings = document.getElementById("cookie-settings");
+	const cookieModal = document.getElementById("cookie-modal");
+	const cookieModalClose = document.getElementById("cookie-modal-close");
+	const cookieModalCancel = document.getElementById("cookie-modal-cancel");
+	const cookieModalSave = document.getElementById("cookie-modal-save");
+	const analyticsCookies = document.getElementById("analytics-cookies");
+	const marketingCookies = document.getElementById("marketing-cookies");
+
+	// Check if consent was already given
+	const consentGiven = getCookie("cookie_consent");
+
+	// If no consent was given yet, show the banner
+	if (!consentGiven) {
+		setTimeout(() => {
+			cookieBanner.classList.add("show");
+		}, 1000);
+	} else {
+		// Apply saved preferences
+		const preferences = JSON.parse(consentGiven);
+		if (analyticsCookies) analyticsCookies.checked = preferences.analytics;
+		if (marketingCookies) marketingCookies.checked = preferences.marketing;
+
+		// Load relevant scripts based on preferences
+		if (preferences.analytics) {
+			loadAnalyticsScripts();
+		}
+
+		if (preferences.marketing) {
+			loadMarketingScripts();
+		}
+	}
+
+	// Event Listeners
+	cookieAccept.addEventListener("click", () => {
+		// Accept all cookies
+		const preferences = {
+			necessary: true,
+			analytics: true,
+			marketing: true,
+		};
+
+		// Save preferences
+		setCookie("cookie_consent", JSON.stringify(preferences), 365);
+
+		// Hide banner
+		cookieBanner.classList.remove("show");
+
+		// Load all scripts
+		loadAnalyticsScripts();
+		loadMarketingScripts();
+	});
+
+	cookieSettings.addEventListener("click", () => {
+		// Show settings modal
+		cookieModal.classList.add("show");
+	});
+
+	cookieModalClose.addEventListener("click", () => {
+		// Close modal
+		cookieModal.classList.remove("show");
+	});
+
+	cookieModalCancel.addEventListener("click", () => {
+		// Close modal without saving
+		cookieModal.classList.remove("show");
+	});
+
+	cookieModalSave.addEventListener("click", () => {
+		// Save preferences
+		const preferences = {
+			necessary: true,
+			analytics: analyticsCookies.checked,
+			marketing: marketingCookies.checked,
+		};
+
+		// Save preferences
+		setCookie("cookie_consent", JSON.stringify(preferences), 365);
+
+		// Close modal and banner
+		cookieModal.classList.remove("show");
+		cookieBanner.classList.remove("show");
+
+		// Load scripts based on preferences
+		if (preferences.analytics) {
+			loadAnalyticsScripts();
+		}
+
+		if (preferences.marketing) {
+			loadMarketingScripts();
 		}
 	});
 }
 
-// Add lightbox initialization to DOMContentLoaded
+// Helper function to set a cookie
+function setCookie(name, value, days) {
+	let expires = "";
+
+	if (days) {
+		const date = new Date();
+		date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+		expires = "; expires=" + date.toUTCString();
+	}
+
+	document.cookie =
+		name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+}
+
+// Helper function to get a cookie
+function getCookie(name) {
+	const nameEQ = name + "=";
+	const ca = document.cookie.split(";");
+
+	for (let i = 0; i < ca.length; i++) {
+		let c = ca[i];
+		while (c.charAt(0) === " ") {
+			c = c.substring(1, c.length);
+		}
+
+		if (c.indexOf(nameEQ) === 0) {
+			return c.substring(nameEQ.length, c.length);
+		}
+	}
+
+	return null;
+}
+
+// Function to load analytics scripts
+function loadAnalyticsScripts() {
+	// This is where you would load Google Analytics or other analytics scripts
+	console.log("Analytics scripts loaded");
+
+	// Example: loading Google Analytics
+	/*
+	const gaScript = document.createElement('script');
+	gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=YOUR-GA-ID';
+	gaScript.async = true;
+	document.head.appendChild(gaScript);
+	
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'YOUR-GA-ID');
+	*/
+}
+
+// Function to load marketing scripts
+function loadMarketingScripts() {
+	// This is where you would load marketing scripts like Facebook Pixel, etc.
+	console.log("Marketing scripts loaded");
+
+	// Example: loading Facebook Pixel
+	/*
+	!function(f,b,e,v,n,t,s)
+	{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+	n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+	if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+	n.queue=[];t=b.createElement(e);t.async=!0;
+	t.src=v;s=b.getElementsByTagName(e)[0];
+	s.parentNode.insertBefore(t,s)}(window, document,'script',
+	'https://connect.facebook.net/en_US/fbevents.js');
+	fbq('init', 'YOUR-PIXEL-ID');
+	fbq('track', 'PageView');
+	*/
+}
+
+// Add to the DOM ready function
 document.addEventListener("DOMContentLoaded", function () {
-	// Existing initializations...
-	initPortfolioLightbox();
+	initCookieConsent();
 });

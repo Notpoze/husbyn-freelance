@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portfolio - Drone Photography & Videography | Husbyn Freelance</title>
-  <meta name="description" content="Explore Husbyn Freelance's portfolio of professional drone photography and videography showcasing Norway's stunning landscapes. Aerial footage from Stjørdal, Trondheim, and Trøndelag region.">
+  <meta name="description" content="View Husbyn Freelance's stunning drone photography portfolio showcasing Norway's dramatic landscapes, fjords and rural beauty. Professional aerial media from Trøndelag region.">
   <link rel="canonical" href="https://www.husbynfreelance.com/portfolio.html" />
   <meta name="keywords" content="Drone photography, portfolio, drone videography, aerial footage, Norway landscapes, professional drone services, Stjørdal, Trondheim, Trøndelag">
   <meta name="author" content="Eirik Husbyn">
@@ -27,11 +27,50 @@
   <meta name="twitter:title" content="Drone Photography & Videography Portfolio | Husbyn Freelance">
   <meta name="twitter:description" content="See stunning aerial footage showcasing Norway's beautiful landscapes from Stjørdal, Trondheim, and the Trøndelag region.">
   <meta name="twitter:image" content="https://www.husbynfreelance.com/images/langstein.JPG">
-
+  
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.husbynfreelance.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Portfolio",
+          "item": "https://www.husbynfreelance.com/portfolio.html"
+        }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ImageObject",
+        "contentUrl": "https://www.husbynfreelance.com/images/langstein.JPG",
+        "description": "Dramatic aerial perspective of Langstein area showing the meeting of mountains and fjord waters, with distinctive Norwegian coastal landscape features",
+        "name": "Langstein",
+        "author": {
+          "@type": "Person",
+          "name": "Eirik Husbyn"
+        },
+        "copyrightHolder": {
+          "@type": "Organization",
+          "name": "Husbyn Freelance"
+        },
+        "datePublished": "2025-02-25"
+      }
+      </script>
   <link rel="stylesheet" href="style.css">
   <script defer src="script.js"></script>
 </head>
 <body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
   <header class="hero">
     <h1>Drone Photography Portfolio</h1>
     <p class="tagline">Capturing Norway's beauty from above</p>
@@ -51,7 +90,7 @@
     </div>
   </nav>
 
-  <main>
+  <main id="main-content">
     <section class="portfolio-intro">
       <div class="container">
         <h2>My Aerial Photography & Videography</h2>
@@ -70,7 +109,7 @@
       
       <div class="gallery">
         <div class="gallery-item">
-          <img src="images/hammervatnet3.JPG" alt="Aerial view of Hammervatnet lake surrounded by forests in summer, showing the water's blue surface contrasting with lush green surroundings" loading="lazy">
+          <img src="images/hammervatnet3.JPG" alt="Aerial view of Hammervatnet lake surrounded by forests in summer, showing the water's blue surface contrasting with lush green surroundings" loading="lazy" width="800" height="533" class="optimized-image" fetchpriority="high">
           <div class="gallery-caption">
             <h3>Hammervatnet</h3>
             <p>This serene lake near Åsen offers stunning reflections and is surrounded by rich forest landscapes. Captured at 120m altitude during early morning golden hour.</p>
@@ -78,7 +117,7 @@
           </div>
         </div>
         <div class="gallery-item">
-          <img src="images/langstein.JPG" alt="Dramatic aerial perspective of Langstein area showing the meeting of mountains and fjord waters, with distinctive Norwegian coastal landscape features" loading="lazy">
+          <img src="images/langstein.JPG" alt="Dramatic aerial perspective of Langstein area showing the meeting of mountains and fjord waters, with distinctive Norwegian coastal landscape features" loading="lazy" width="800" height="533" class="optimized-image" fetchpriority="high">
           <div class="gallery-caption">
             <h3>Langstein</h3>
             <p>A dramatic view of where mountains meet the Trondheimsfjord, capturing the rugged beauty characteristic of Norway's coastal landscapes.</p>
@@ -86,7 +125,7 @@
           </div>
         </div>
         <div class="gallery-item">
-          <img src="images/aasen1.JPG" alt="Panoramic aerial view of Åsen region displaying the typical Norwegian countryside with farmlands, forests, and mountain backdrop" loading="lazy">
+          <img src="images/aasen1.JPG" alt="Panoramic aerial view of Åsen region displaying the typical Norwegian countryside with farmlands, forests, and mountain backdrop" loading="lazy" width="800" height="533" class="optimized-image" fetchpriority="high"/>
           <div class="gallery-caption">
             <h3>Åsen</h3>
             <p>This panoramic shot reveals the gentle rolling landscapes of Åsen, showcasing the harmony between agricultural land and natural features that defines rural Norway.</p>
@@ -150,11 +189,16 @@
       
         <!-- Center Section: Navigation Links -->
         <div class="nav-center">
-          <a href="./">Home</a>
-          <a href="portfolio.html">Portfolio</a>
-          <a href="contact.html">Contact</a>
+          <a href="./" aria-label="Home">Home</a>
+          <a href="portfolio.html" aria-label="Portfolio">Portfolio</a>
+          <a href="contact.html" aria-label="Contact">Contact</a>
         </div>
       </nav>
+    </div>
+    
+    <!-- Add this new section for privacy policy link -->
+    <div class="footer-links">
+      <a href="privacy-policy.html" aria-label="Privacy Policy">Privacy Policy</a>
     </div>
     
     <div class="copyright">
