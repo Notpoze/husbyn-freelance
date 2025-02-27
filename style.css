@@ -1145,7 +1145,6 @@ input:checked + .cookie-slider:before {
 /* ===== RESPONSIVE STYLES ===== */
 @media (max-width: 768px) {
   body, html {
-    overflow-x: hidden;
     max-width: 100%;
     width: 100%;
   }
