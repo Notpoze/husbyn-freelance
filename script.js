@@ -304,183 +304,342 @@ function initMediaOptimization() {
 
 // Combined lightbox functionality
 function initLightbox() {
-	// Create lightbox container if it doesn't exist
-	if (!document.getElementById("lightbox-container")) {
-		const lightboxHTML = `
-	  <div id="lightbox-container" class="lightbox-container" role="dialog" aria-modal="true" aria-label="Image Lightbox">
-		<div class="lightbox-content">
-		  <img id="lightbox-image" class="lightbox-image" src="" alt="Full-size image">
-		  <div id="lightbox-caption" class="lightbox-caption"></div>
-		</div>
-		<button id="lightbox-prev" class="lightbox-prev" aria-label="Previous image">❮</button>
-		<button id="lightbox-next" class="lightbox-next" aria-label="Next image">❯</button>
-		<button id="lightbox-close" class="lightbox-close" aria-label="Close lightbox">×</button>
-	  </div>
-	  `;
-		document.body.insertAdjacentHTML("beforeend", lightboxHTML);
-	}
+	try {
+		// Create lightbox container if it doesn't exist
+		if (!document.getElementById("lightbox-container")) {
+			const lightboxHTML = `
+		  <div id="lightbox-container" class="lightbox-container" role="dialog" aria-modal="true" aria-label="Image Lightbox">
+			<div class="lightbox-content">
+			  <img id="lightbox-image" class="lightbox-image" src="" alt="Full-size image">
+			  <div id="lightbox-caption" class="lightbox-caption"></div>
+			</div>
+			<button id="lightbox-prev" class="lightbox-prev" aria-label="Previous image">❮</button>
+			<button id="lightbox-next" class="lightbox-next" aria-label="Next image">❯</button>
+			<button id="lightbox-close" class="lightbox-close" aria-label="Close lightbox">×</button>
+		  </div>
+		`;
+			document.body.insertAdjacentHTML("beforeend", lightboxHTML);
+		}
 
-	// Get lightbox elements
-	const lightboxContainer = document.getElementById("lightbox-container");
-	const lightboxImage = document.getElementById("lightbox-image");
-	const lightboxCaption = document.getElementById("lightbox-caption");
-	const prevButton = document.getElementById("lightbox-prev");
-	const nextButton = document.getElementById("lightbox-next");
-	const closeButton = document.getElementById("lightbox-close");
+		// Get lightbox elements
+		const lightboxContainer = document.getElementById("lightbox-container");
+		const lightboxImage = document.getElementById("lightbox-image");
+		const lightboxCaption = document.getElementById("lightbox-caption");
+		const prevButton = document.getElementById("lightbox-prev");
+		const nextButton = document.getElementById("lightbox-next");
+		const closeButton = document.getElementById("lightbox-close");
 
-	// Get all gallery images
-	const galleryImages = document.querySelectorAll(".gallery-item img");
-	if (galleryImages.length === 0) return;
+		// Check if all required elements exist
+		if (
+			!lightboxContainer ||
+			!lightboxImage ||
+			!lightboxCaption ||
+			!prevButton ||
+			!nextButton ||
+			!closeButton
+		) {
+			console.error(
+				"Lightbox initialization failed: required elements not found."
+			);
+			return;
+		}
 
-	// Array to store all gallery images data
-	const galleryData = [];
+		// Get all gallery images
+		const galleryImages = document.querySelectorAll(".gallery-item img");
+		if (galleryImages.length === 0) return;
 
-	// Add click event to each gallery image
-	galleryImages.forEach((img, index) => {
-		// Get the caption from the next sibling .gallery-caption element
-		const captionEl = img
-			.closest(".gallery-item")
-			.querySelector(".gallery-caption");
-		const captionTitle =
-			captionEl && captionEl.querySelector("h3")
-				? captionEl.querySelector("h3").textContent
-				: "";
-		const captionText =
-			captionEl && captionEl.querySelector("p")
-				? captionEl.querySelector("p").textContent
-				: "";
+		// Array to store all gallery images data
+		const galleryData = [];
 
-		// Store image data
-		galleryData.push({
-			src: img.src,
-			alt: img.alt || "Gallery image",
-			title: captionTitle,
-			description: captionText,
-		});
+		// Add click event to each gallery image
+		galleryImages.forEach((img, index) => {
+			try {
+				// Get the caption from the gallery-caption element within the same gallery-item
+				const galleryItem = img.closest(".gallery-item");
+				if (!galleryItem) return;
 
-		// Make the image clickable
-		img.style.cursor = "pointer";
-		img.setAttribute("data-index", index);
-		img.setAttribute(
-			"aria-label",
-			`View larger image: ${captionTitle || "Gallery image"}`
-		);
-		img.setAttribute("tabindex", "0"); // Make focusable
+				const captionEl = galleryItem.querySelector(".gallery-caption");
 
-		// Add click and keypress event listeners
-		img.addEventListener("click", function () {
-			openLightbox(index);
-		});
+				// Safely extract caption text
+				let captionTitle = "";
+				let captionText = "";
 
-		img.addEventListener("keydown", function (e) {
-			if (e.key === "Enter" || e.key === " ") {
-				e.preventDefault();
-				openLightbox(index);
+				if (captionEl) {
+					const titleEl = captionEl.querySelector("h3");
+					const textEl = captionEl.querySelector("p");
+
+					captionTitle = titleEl ? titleEl.textContent.trim() : "";
+					captionText = textEl ? textEl.textContent.trim() : "";
+				}
+
+				// Store image data
+				galleryData.push({
+					src: img.src || "",
+					alt: img.alt || "Gallery image",
+					title: captionTitle,
+					description: captionText,
+				});
+
+				// Make the image clickable
+				img.style.cursor = "pointer";
+				img.setAttribute("data-index", index);
+				img.setAttribute(
+					"aria-label",
+					`View larger image: ${captionTitle || "Gallery image"}`
+				);
+				img.setAttribute("tabindex", "0"); // Make focusable
+
+				// Add click and keypress event listeners
+				img.addEventListener("click", function () {
+					openLightbox(index);
+				});
+
+				img.addEventListener("keydown", function (e) {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						openLightbox(index);
+					}
+				});
+			} catch (err) {
+				console.error("Error processing gallery image:", err);
 			}
 		});
-	});
 
-	// Current image index
-	let currentIndex = 0;
+		// Current image index
+		let currentIndex = 0;
 
-	// Open lightbox function
-	function openLightbox(index) {
-		currentIndex = index;
-		updateLightboxContent();
-		lightboxContainer.style.display = "flex";
-		document.body.style.overflow = "hidden"; // Prevent scrolling
+		// Open lightbox function with error handling
+		function openLightbox(index) {
+			try {
+				if (index < 0 || index >= galleryData.length) {
+					console.error("Invalid image index:", index);
+					return;
+				}
 
-		// Set focus to lightbox
-		closeButton.focus();
+				currentIndex = index;
+				updateLightboxContent();
+				lightboxContainer.style.display = "flex";
+				document.body.style.overflow = "hidden"; // Prevent scrolling
 
-		// Add keyboard event listener
-		document.addEventListener("keydown", handleKeyboardNavigation);
-	}
+				// Set focus to lightbox
+				closeButton.focus();
 
-	// Update lightbox content
-	function updateLightboxContent() {
-		const data = galleryData[currentIndex];
-		lightboxImage.src = data.src;
-		lightboxImage.alt = data.alt;
-
-		// Update caption
-		lightboxCaption.innerHTML = `
-	  <h3>${data.title}</h3>
-	  <p>${data.description}</p>
-	  `;
-
-		// Update button states (disable if at the end)
-		prevButton.style.visibility = currentIndex > 0 ? "visible" : "hidden";
-		prevButton.disabled = currentIndex === 0;
-
-		nextButton.style.visibility =
-			currentIndex < galleryData.length - 1 ? "visible" : "hidden";
-		nextButton.disabled = currentIndex === galleryData.length - 1;
-
-		// Update aria labels
-		lightboxContainer.setAttribute(
-			"aria-label",
-			`Image ${currentIndex + 1} of ${galleryData.length}: ${data.title}`
-		);
-	}
-
-	// Close lightbox function
-	function closeLightbox() {
-		lightboxContainer.style.display = "none";
-		document.body.style.overflow = "auto"; // Restore scrolling
-		document.removeEventListener("keydown", handleKeyboardNavigation);
-
-		// Return focus to the triggering image
-		const originalImage = document.querySelector(
-			`.gallery-item img[data-index="${currentIndex}"]`
-		);
-		if (originalImage) {
-			originalImage.focus();
+				// Add keyboard event listener
+				document.addEventListener("keydown", handleKeyboardNavigation);
+			} catch (err) {
+				console.error("Error opening lightbox:", err);
+				// Try to reset state if there's an error
+				try {
+					lightboxContainer.style.display = "none";
+					document.body.style.overflow = "auto";
+				} catch (resetErr) {
+					console.error("Error resetting after lightbox error:", resetErr);
+				}
+			}
 		}
-	}
 
-	// Navigate to previous image
-	function prevImage() {
-		if (currentIndex > 0) {
-			currentIndex--;
-			updateLightboxContent();
+		// Update lightbox content with error handling
+		function updateLightboxContent() {
+			try {
+				if (currentIndex < 0 || currentIndex >= galleryData.length) {
+					console.error("Invalid currentIndex:", currentIndex);
+					return;
+				}
+
+				const data = galleryData[currentIndex];
+				if (!data) {
+					console.error("No data found for currentIndex:", currentIndex);
+					return;
+				}
+
+				// Safely update image - IMPORTANT: Preload the image to prevent freezing
+				const tempImage = new Image();
+				tempImage.onload = function () {
+					lightboxImage.src = this.src;
+					lightboxImage.alt = data.alt || "Gallery image";
+
+					// Update caption after image loads
+					lightboxCaption.innerHTML = `
+			  <h3>${data.title || ""}</h3>
+			  <p>${data.description || ""}</p>
+			`;
+
+					// Update buttons only after image loads
+					updateNavigationButtons();
+				};
+
+				tempImage.onerror = function () {
+					console.error("Error loading image:", data.src);
+					lightboxImage.src = "";
+					lightboxImage.alt = "Image failed to load";
+					lightboxCaption.innerHTML = `
+			  <h3>${data.title || ""}</h3>
+			  <p>The image could not be loaded</p>
+			`;
+					updateNavigationButtons();
+				};
+
+				// Start loading the image
+				tempImage.src = data.src || "";
+
+				// Show loading state
+				lightboxImage.style.opacity = "0.5";
+			} catch (err) {
+				console.error("Error updating lightbox content:", err);
+			}
 		}
-	}
 
-	// Navigate to next image
-	function nextImage() {
-		if (currentIndex < galleryData.length - 1) {
-			currentIndex++;
-			updateLightboxContent();
+		// Update navigation buttons separately
+		function updateNavigationButtons() {
+			try {
+				// Restore image opacity
+				lightboxImage.style.opacity = "1";
+
+				// Update button states (disable if at the end)
+				prevButton.style.visibility = currentIndex > 0 ? "visible" : "hidden";
+				prevButton.disabled = currentIndex === 0;
+
+				nextButton.style.visibility =
+					currentIndex < galleryData.length - 1 ? "visible" : "hidden";
+				nextButton.disabled = currentIndex === galleryData.length - 1;
+
+				// Update aria labels
+				lightboxContainer.setAttribute(
+					"aria-label",
+					`Image ${currentIndex + 1} of ${galleryData.length}: ${
+						galleryData[currentIndex].title || ""
+					}`
+				);
+			} catch (err) {
+				console.error("Error updating navigation buttons:", err);
+			}
 		}
-	}
 
-	// Handle keyboard navigation
-	function handleKeyboardNavigation(e) {
-		switch (e.key) {
-			case "ArrowLeft":
+		// Close lightbox function with error handling
+		function closeLightbox() {
+			try {
+				lightboxContainer.style.display = "none";
+				document.body.style.overflow = "auto"; // Restore scrolling
+				document.removeEventListener("keydown", handleKeyboardNavigation);
+
+				// Return focus to the triggering image
+				try {
+					const originalImage = document.querySelector(
+						`.gallery-item img[data-index="${currentIndex}"]`
+					);
+					if (originalImage) {
+						originalImage.focus();
+					}
+				} catch (focusErr) {
+					console.error("Error focusing original image:", focusErr);
+				}
+			} catch (err) {
+				console.error("Error closing lightbox:", err);
+				// Force reset in case of error
+				document.body.style.overflow = "auto";
+			}
+		}
+
+		// Navigate to previous image with error handling
+		function prevImage() {
+			try {
+				if (currentIndex > 0) {
+					currentIndex--;
+					updateLightboxContent();
+				}
+			} catch (err) {
+				console.error("Error navigating to previous image:", err);
+			}
+		}
+
+		// Navigate to next image with error handling
+		function nextImage() {
+			try {
+				if (currentIndex < galleryData.length - 1) {
+					currentIndex++;
+					updateLightboxContent();
+				}
+			} catch (err) {
+				console.error("Error navigating to next image:", err);
+			}
+		}
+
+		// Handle keyboard navigation with error handling
+		function handleKeyboardNavigation(e) {
+			try {
+				switch (e.key) {
+					case "ArrowLeft":
+						prevImage();
+						break;
+					case "ArrowRight":
+						nextImage();
+						break;
+					case "Escape":
+						closeLightbox();
+						break;
+				}
+			} catch (err) {
+				console.error("Error handling keyboard navigation:", err);
+				// Try to reset on error
+				try {
+					closeLightbox();
+				} catch (resetErr) {
+					console.error(
+						"Error resetting after keyboard navigation error:",
+						resetErr
+					);
+				}
+			}
+		}
+
+		// Add event listeners to lightbox buttons with error handling
+		prevButton.addEventListener("click", function (e) {
+			try {
 				prevImage();
-				break;
-			case "ArrowRight":
+			} catch (err) {
+				console.error("Error on prev button click:", err);
+			}
+		});
+
+		nextButton.addEventListener("click", function (e) {
+			try {
 				nextImage();
-				break;
-			case "Escape":
+			} catch (err) {
+				console.error("Error on next button click:", err);
+			}
+		});
+
+		closeButton.addEventListener("click", function (e) {
+			try {
 				closeLightbox();
-				break;
-		}
+			} catch (err) {
+				console.error("Error on close button click:", err);
+			}
+		});
+
+		// Close when clicking outside the image with error handling
+		lightboxContainer.addEventListener("click", function (e) {
+			try {
+				if (e.target === lightboxContainer) {
+					closeLightbox();
+				}
+			} catch (err) {
+				console.error("Error on lightbox container click:", err);
+				// Force reset in case of error
+				try {
+					document.body.style.overflow = "auto";
+					lightboxContainer.style.display = "none";
+				} catch (resetErr) {
+					console.error(
+						"Error resetting after container click error:",
+						resetErr
+					);
+				}
+			}
+		});
+	} catch (err) {
+		console.error("Error initializing lightbox:", err);
 	}
-
-	// Add event listeners to lightbox buttons
-	prevButton.addEventListener("click", prevImage);
-	nextButton.addEventListener("click", nextImage);
-	closeButton.addEventListener("click", closeLightbox);
-
-	// Close when clicking outside the image
-	lightboxContainer.addEventListener("click", function (e) {
-		if (e.target === lightboxContainer) {
-			closeLightbox();
-		}
-	});
 }
 
 // Form validation
